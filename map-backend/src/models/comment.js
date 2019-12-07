@@ -7,6 +7,7 @@ const CommentSchema = new Schema({
     body: String,
     publishingDate: { type : Date, default: Date.now },
     username: String,
+    status: {block : Boolean, warningCount: Number, username: [String]}
 });
 
 CommentSchema.statics.findByUsername = function(username){

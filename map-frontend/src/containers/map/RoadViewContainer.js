@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import client from "../../lib/api/client";
 import {InfoWindow, Polyline} from "@react-google-maps/api";
@@ -129,7 +129,7 @@ const RoadViewListItem = ({road}) => {
             dispatch(fetchRoadInfo(road._id));
         }
         //setLocalInfo({type: 'toggleInfoWindow'});
-    }, [localInfo]);
+    }, [localInfo, isMarkerClicked]);
     const onMouseOver = useCallback(() => setLocalInfo({type: 'toggleMouseOverWindow'}), [localInfo]);
     const onTabPositionClick = useCallback(() => setLocalInfo({type: 'toggleTabPosition'}), [localInfo]);
     const onTabEstimateClick = useCallback(() => setLocalInfo({type: 'toggleTabEstimate'}), [localInfo]);
@@ -154,6 +154,8 @@ const RoadViewListItem = ({road}) => {
         //uploadComment();
     }, [localInfo]);
 
+
+
     const addInfoToBookMark = useCallback(() => {
         if (!localInfo.isInBookMark && isAddBookMark) {
             updateLocalBookMark(true);
@@ -170,6 +172,7 @@ const RoadViewListItem = ({road}) => {
             <InfoWindow position={getRoadInfoWindowPosition(road)}>
                 <CardComponent info={road}/>
             </InfoWindow>}
+            {/*
             {localInfo.visibleInfoWindow && <InfoWindow position={getRoadInfoWindowPosition(road)}
                                                         onCloseClick={onCloseClick}
                                                         options={{maxWidth: "1200px", maxHeight: "600px"}}>
@@ -247,14 +250,23 @@ const RoadViewListItem = ({road}) => {
                     </Row>
                 </div>
             </InfoWindow>}
+            */}
             <Polyline path={road.roadInfo} options={selectPolyLineOption(road)} onMouseOver={onMouseOver}
                       onMouseOut={onMouseOver} onClick={onRoadClick}/>
+
         </>
     )
 };
 
 const RoadViewContainer = ({roadList}) => {
+
+    useEffect(()=>{
+        console.dir(roadList);
+    }, [roadList]);
+
     if (!roadList) return null;
+
+
 
     return (
         <>

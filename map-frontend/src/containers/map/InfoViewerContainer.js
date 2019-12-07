@@ -7,7 +7,8 @@ import BasicInfoViewerContainer from "./BasicInfoViewerContainer";
 import EstimateContainer from "./EstimateContainer";
 import CommentContainer from "./CommentContainer";
 import {FaStar, IoIosClose} from "react-icons/all";
-import {setInfoViewer} from "../../modules/map";
+import {removeFetchedData, setCommentList, setInfoViewer} from "../../modules/map";
+import client from "../../lib/api/client";
 
 const StyledWrapper = styled.div`
     z-index: 20;
@@ -58,7 +59,7 @@ const InfoWindowReducer = (state, action) => {
 const initialState = {
     visibleOnTabPosition: true,
     visibleOnTabEstimate: false,
-    toggleTabComment: false,
+    visibleOnTabComment: false,
     isInBookMark: false,
     commentList: [],
     filteredData : null,
@@ -66,50 +67,121 @@ const initialState = {
 
 const InfoViewerContainer = () => {
     const [localInfo, setLocalInfo] = useReducer(InfoWindowReducer, initialState);
-    const {placeInfo, roadInfo, buildingInfo, searchQueryType} = useSelector(({map}) => ({
+    const {placeInfo, roadInfo, buildingInfo, searchQueryType, storeCommentList,
+        isMarkerClicked} = useSelector(({map}) => ({
         searchQueryType: map.searchQuery.searchQueryType,
         roadInfo : map.roadInfo,
         placeInfo: map.placeInfo,
         buildingInfo: map.buildingInfo,
+        storeCommentList: map.commentList,
+        isMarkerClicked: map.isMarkerClicked
     }));
 
     const dispatch = useDispatch();
     const toggleTabEstimate = useCallback(() => {
         setLocalInfo({type: 'toggleTabEstimate'})
-    }, [localInfo]);
+    }, []);
     const toggleTabComment = useCallback(() => {
         setLocalInfo({type: 'toggleTabComment'})
-    }, [localInfo]);
+    }, []);
     const toggleTabPosition = useCallback(() => {
         setLocalInfo({type: 'toggleTabPosition'})
-    }, [localInfo]);
+    }, []);
     const updateComment = useCallback((value) =>
         setLocalInfo({type: 'updateComment', comment: value}),
         [localInfo]);
     const updateFilteredData = useCallback((data) => {
-        console.dir(data);
         setLocalInfo({type: 'updateFilteredData', filteredData: data});
     },[]);
     const onCloseClick = useCallback(() => {
+            console.dir(storeCommentList);
+            const uploadComment = async () => {
+                try {
+                    if(searchQueryType === 'place' )
+                        await client.patch(`/api/map/userPlace/comment/${localInfo.filteredData._id}`, {
+                            commentList : storeCommentList
+                        });
+                    if(searchQueryType === 'road' )
+                        await client.patch(`/api/map/userRoad/comment/${localInfo.filteredData._id}`, {
+                            commentList : storeCommentList
+                        });
+                    if(searchQueryType === 'building' )
+                        await client.patch(`/api/map/userBuilding/comment/${localInfo.filteredData._id}`, {
+                            commentList : storeCommentList
+                        });
+                } catch (e) {
+                    console.dir(e);
+                }
+            };
+
+
+        const updateCommentWarning = async () => {
+            try{
+                switch(searchQueryType){
+                    case 'place': {
+                        console.dir(storeCommentList);
+
+                        await client.patch(`/api/map/userPlace/warningComment/${placeInfo._id}`, {
+                            commentList : storeCommentList
+                        });
+
+
+                        break;
+                    }
+                    case 'road': {
+
+                    }
+                    case 'building': {
+
+                    }
+                    case "buindle": {
+
+                    }
+                }
+            }catch(e){
+                console.dir(e);
+                alert('이미 신고하셨습니다');
+            }
+        };
+
+
+
+            if(isMarkerClicked && storeCommentList !== []){
+                uploadComment();
+                updateCommentWarning();
+                dispatch(removeFetchedData());
+                updateComment([]);
+                dispatch(setCommentList([]));
+            }
         dispatch(setInfoViewer(false));
-    }, [dispatch]);
+    }, [dispatch, isMarkerClicked, storeCommentList, searchQueryType]);
 
     useEffect(() => {
-        console.dir(searchQueryType);
         if(searchQueryType === 'place' && placeInfo) updateFilteredData(placeInfo);
         if(searchQueryType === 'road' && roadInfo) updateFilteredData(roadInfo);
         if(searchQueryType === 'building' && buildingInfo) updateFilteredData(buildingInfo);
-
     }, [placeInfo, roadInfo, buildingInfo, searchQueryType]);
 
     useEffect(() => {
-        console.dir(localInfo.filteredData);
+        if(localInfo.filteredData ) console.dir(localInfo.filteredData.commentList);
+        if(localInfo.filteredData && localInfo.filteredData.commentList.length !== 0) {
+                updateComment(localInfo.filteredData.commentList);
+        }
     }, [localInfo.filteredData]);
+
+    useEffect(() => {
+        dispatch(setCommentList(localInfo.commentList));
+    }, [localInfo.commentList]);
+
+    useEffect(() => {
+        console.dir(localInfo.commentList);
+    }, [localInfo.commentList]);
 
     if(searchQueryType === 'road' && !localInfo.filteredData) return null;
     if(searchQueryType === 'place' && !localInfo.filteredData) return null;
     if(searchQueryType === 'building' && !localInfo.filteredData) return null;
-    if(!localInfo.filteredData) return null;
+    if(!localInfo.filteredData ) return null;
+
 
     return (
         <StyledWrapper>
@@ -145,7 +217,8 @@ const InfoViewerContainer = () => {
                             {localInfo.visibleOnTabPosition && <BasicInfoViewerContainer info={localInfo.filteredData}/>}
                             {localInfo.visibleOnTabEstimate && <EstimateContainer info={localInfo.filteredData}/>}
                             {localInfo.visibleOnTabComment &&
-                            <CommentContainer info={localInfo.filteredData} setUpdateCommentList={updateComment}/>}
+                            <CommentContainer commentList={localInfo.commentList} UpdateCommentList={updateComment}
+                                            placeObjectId={localInfo.filteredData._id}/>}
                         </div>
                     </Col>
                 </Row>

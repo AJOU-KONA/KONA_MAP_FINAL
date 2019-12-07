@@ -12,7 +12,6 @@ const YoutubeContainer = ({youtubeVideoId}) =>{
 
     const _onReady = (e) => {
         // access to player in all event handlers via event.target
-        console.dir(e.target);
         e.target.playVideo();
     };
 

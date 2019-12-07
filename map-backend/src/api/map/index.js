@@ -1,6 +1,7 @@
 import Router from 'koa-router';
 import * as mapCtrl from './map.ctrl';
 import checkLoggedIn from "../../lib/checkLoggedIn";
+import {check} from "../auth/auth.ctrl";
 
 const map = new Router();
 
@@ -36,8 +37,12 @@ map.patch('/userRoad/comment/:id', checkLoggedIn, mapCtrl.updateUserRoadComment)
 
 map.patch('/userPlace/comment/:id', checkLoggedIn, mapCtrl.updateUserPlaceComment);
 
+map.patch('/userBuilding/comment/:id', checkLoggedIn, mapCtrl.updateUserBuildingComment);
+
 map.patch('/userPlace/recommend/:id', checkLoggedIn, mapCtrl.updateUserPlaceRecommend);
 
 map.patch('/userPlace/deleteComment', checkLoggedIn, mapCtrl.deleteComment);
+
+map.patch('/userPlace/warningComment/:id', checkLoggedIn, mapCtrl.updateUserPlaceCommentWarning);
 
 export default map;

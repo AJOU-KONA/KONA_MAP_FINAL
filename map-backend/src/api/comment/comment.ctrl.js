@@ -30,6 +30,7 @@ function makeComment(item){
 };
 
 export const register = async ctx => {
+    console.dir('comment register');
     //console.dir(ctx.request.body);
     const schema = Joi.object().keys({
         username: Joi.string()

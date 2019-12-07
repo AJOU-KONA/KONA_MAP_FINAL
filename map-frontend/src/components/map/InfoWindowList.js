@@ -12,15 +12,12 @@ import bedIcon from '../../lib/styles/MarkerImage/icons/bed.png';
 import convenientIcon from '../../lib/styles/MarkerImage/icons/convenience-store.png';
 import salonIcon from '../../lib/styles/MarkerImage/icons/salon.png';
 import {useDispatch, useSelector} from "react-redux";
-import {updateBookMark, setInfoViewer, fetchPlaceInfo} from "../../modules/map";
-import EstimateContainer from "../../containers/map/EstimateContainer";
+import {updateBookMark, setInfoViewer, fetchPlaceInfo, setCommentList} from "../../modules/map";
 import client from "../../lib/api/client";
 import ClusterMarkerContainer from "../../containers/map/ClusterMarkerContainer";
 import RoadViewContainer from "../../containers/map/RoadViewContainer";
 import CardComponent from "./CardComponent";
-import CarouselContainer from "../../containers/map/CarouselContainer";
 import styled from "styled-components";
-import BasicInfoViewerContainer from "../../containers/map/BasicInfoViewerContainer";
 import BuildingViewContainer from "../../containers/map/BuildingViewContainer";
 
 const findIcon = primaryType => {
@@ -179,6 +176,10 @@ const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
         }
     }, [searchQuery, searchQueryType, searchQueryOption]);
 
+    useEffect(() => {
+        console.dir(filteredData);
+    }, [filteredData]);
+
     if (searchQueryType !== 'bundle' && !filteredData) return null;
     if (searchQueryType === 'bundle' && (!filteredBundlePlace || !filteredBundleRoad)) return null;
 
@@ -225,9 +226,6 @@ const InfoWindowReducer = (state, action) => {
         case 'toggleCloseBox' : {
             return {...state, isCloseBox: action.isCloseBox};
         }
-        case 'setLoading' : {
-            return {...state, loading: action.loading};
-        }
         case 'addBookMark' : {
             return {...state, isInBookMark: action.isInBookMark}
         }
@@ -248,54 +246,45 @@ const initialState = {
     commentList: [],
     visibleInfoWindow: false,
     isCloseBox: true,
-    loading: false,
     isInBookMark: false,
     infoWindowObject: null,
 };
 
 const InfoWindowItem = ({info, zoom}) => {
     const [localInfo, setLocalInfo] = useReducer(InfoWindowReducer, initialState);
-    const {username, isAddBookMark, buildingList, roadList, placeList, isMarkerClicked} = useSelector(({user, map}) => ({
+    const {username, isAddBookMark, buildingList, roadList, placeList, isMarkerClicked,
+    storeCommentList, searchQueryType } = useSelector(({user, map}) => ({
         username: user.user.username,
         isAddBookMark: map.isAddBookMark,
         buildingList: map.bookMark.buildingList,
         roadList: map.bookMark.roadList,
         placeList: map.bookMark.placeList,
-        isMarkerClicked: map.isMarkerClicked
+        isMarkerClicked: map.isMarkerClicked,
+        storeCommentList: map.commentList,
+        searchQueryType: map.searchQuery.searchQueryType,
     }));
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        console.dir(isMarkerClicked);
+    }, [isMarkerClicked]);
 
     const toggleMarKerMouseOver = useCallback(() => {
         setLocalInfo({type: 'toggleMouseOverWindow'})
     }, [localInfo]);
     const toggleInfoWindow = useCallback(() => {
+        console.dir(isMarkerClicked);
         if(!isMarkerClicked) {
             dispatch(fetchPlaceInfo(info._id));
             dispatch(setInfoViewer(true));
         }
         else dispatch(setInfoViewer(false));
         //setLocalInfo({type: 'toggleInfoWindow'})
-    }, [localInfo]);
-    const toggleTabEstimate = useCallback(() => {
-        setLocalInfo({type: 'toggleTabEstimate'})
-    }, [localInfo]);
-    const toggleTabComment = useCallback(() => {
-        setLocalInfo({type: 'toggleTabComment'})
-    }, [localInfo]);
-    const toggleTabPosition = useCallback(() => {
-        setLocalInfo({type: 'toggleTabPosition'})
-    }, [localInfo]);
-    const setLoading = useCallback((value) => {
-        setLocalInfo({type: 'setLoading', loading: value})
-    }, [localInfo]);
-    const updateComment = useCallback((value) => setLocalInfo({type: 'updateComment', comment: value}), [localInfo]);
+    }, [localInfo, isMarkerClicked]);
+
     const updateLocalBookMark = useCallback((value) => {
         setLocalInfo({type: 'addBookMark', isInBookMark: value})
     }, [localInfo]);
-    const setInfoWindowObject = useCallback((object) => {
-        setLocalInfo(
-            {type: 'setInfoWindowObject', infoWindowObject: object})
-    }, [localInfo.infoWindowObject]);
 
     const addInfoToBookMark = useCallback(() => {
         if (!localInfo.isInBookMark && isAddBookMark) {
@@ -307,24 +296,37 @@ const InfoWindowItem = ({info, zoom}) => {
     }, [isAddBookMark]);
 
 
-    const onCloseClick = useCallback(() => {
-        if(isMarkerClicked) dispatch(setInfoViewer(false));
+    {/*
+    useEffect(() => {
+        console.dir(storeCommentList);
         const uploadComment = async () => {
-            setLoading(true);
             try {
-                const response = await client.patch(`/api/map/userPlace/comment/${info._id}`, ({
-                    commentList: localInfo.commentList,
-                    username: username,
-                }));
+                if(searchQueryType === 'place' )
+                    await client.patch(`/api/map/userPlace/comment/${localInfo.filteredData._id}`, {
+                        commentList : localInfo.commentList
+                    });
+                if(searchQueryType === 'road' )
+                    await client.patch(`/api/map/userRoad/comment/${localInfo.filteredData._id}`, {
+                        commentList : localInfo.commentList
+                    });
+                if(searchQueryType === 'building' )
+                    await client.patch(`/api/map/userBuilding/comment/${localInfo.filteredData._id}`, {
+                        commentList : localInfo.commentList
+                    });
             } catch (e) {
                 console.dir(e);
             }
-            setLoading(false);
         };
-        uploadComment();
-    }, [localInfo, isMarkerClicked]);
+
+        if(!isMarkerClicked && storeCommentList !== []){
+            //uploadComment();
+            dispatch(setCommentList([]));
+        }
+    }, [isMarkerClicked, storeCommentList, searchQueryType]);
+    */}
 
     if (!info) return null;
+
 
     return (
         <>
@@ -343,51 +345,6 @@ const InfoWindowItem = ({info, zoom}) => {
             {info.radius !== undefined && localInfo.visibleInfoWindow &&
             <Circle center={info.position} radius={info.radius}/>}
 
-            {localInfo.visibleInfoWindow &&
-            <InfoWindow position={adjustMouseOverPosition(info.position, zoom)} onCloseClick={onCloseClick}
-                        options={{maxWidth: "1000px", maxHeight: "1200px", minHeight : 1000}} onLoad={setInfoWindowObject}>
-                <div style={{width: 1100, height: 600}}>
-                    <Row>
-                        <Col>
-                            <div style={{width: 600, height: 600}}>
-                                <CarouselContainer info={info}/>
-                            </div>
-                        </Col>
-                        <Col>
-                            <div style={{width: 450, height: 600, paddingBottom: 20}}>
-                                <Nav fill justify variant="pills" defaultActiveKey="info-position">
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="info-position"
-                                                  onSelect={toggleTabPosition}
-                                        >위치 정보</Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="estimate-user"
-                                                  onSelect={toggleTabEstimate}
-                                        >사용자 평가</Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="comment-user"
-                                                  onSelect={toggleTabComment}
-                                        >댓글</Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="bookMark"
-                                                  onSelect={addInfoToBookMark}
-                                        >즐겨찾기추가
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                </Nav>
-
-                                {localInfo.visibleOnTabPosition && <BasicInfoViewerContainer info={info}/>}
-                                {localInfo.visibleOnTabEstimate && <EstimateContainer info={info}/>}
-                                {localInfo.visibleOnTabComment &&
-                                <CommentContainer info={info} setUpdateCommentList={updateComment}/>}
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
-            </InfoWindow>}
         </>
     );
 };

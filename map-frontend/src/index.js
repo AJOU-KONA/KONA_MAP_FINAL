@@ -20,10 +20,13 @@ const store = createStore(
     composeWithDevTools(applyMiddleware(sagaMiddleware)),
 );
 
-function loadUser() {
+function loadUser(history) {
     try {
         const user = localStorage.getItem('user');
-        if (!user) return;
+        if (!user) {
+            history.push('/login');
+            //return;
+        }
 
         store.dispatch(tempSetUser(user));
         store.dispatch(check());

@@ -47,8 +47,8 @@ const UserInfoOnMapContainer = ({zoom}) => {
     }, [searchQueryType]);
 
     useEffect(() => {
-        if(placeInfo) dispatch(setCommentList(placeInfo));
-    }, [placeInfo]);
+        console.dir(roadInfo);
+    }, [roadInfo]);
 
     useEffect(() => {
         console.dir(bundleInfo);

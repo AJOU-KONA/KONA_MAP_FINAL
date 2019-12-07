@@ -9,6 +9,7 @@ const SET_SEARCH_QUERY = 'map/SET_SEARCH_QUERY';
 const SET_CURRENT_USER_LOCATION = 'map/SET_CURRENT_USER_LOCATION';
 const SET_COMMENT_LIST  = 'map/SET_COMMENT_LIST';
 const SET_COMMENT = 'map/SET_COMMENT';
+const REMOVE_FETCHED_DATA = 'map/REMOVE_FETCHED_DATA';
 const SET_ADD_INFO_ON_MAP = 'map/SET_ADD_INFO_ON_MAP';
 const SET_ADD_ROAD_ON_MAP = 'map/SET_ADD_ROAD_ON_MAP';
 const SET_ADD_BUILDING_ON_MAP = 'map/SET_ADD_BUILDING_ON_MAP';
@@ -34,6 +35,7 @@ export const setSearchQuery = createAction(SET_SEARCH_QUERY,
     ({searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption}) => ({
     searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption
 }));
+export const removeFetchedData = createAction(REMOVE_FETCHED_DATA);
 export const clearMap = createAction(CLEAR_MAP, isclearMap => isclearMap);
 export const updateBookMark = createAction(UPDATE_BOOK_MARK, ({buildingList, roadList, placeList}) =>
     ({buildingList, roadList, placeList}));
@@ -75,7 +77,7 @@ const initialState = {
         lat: '',
         lng: '',
     },
-    commentList : null,
+    commentList : [],
     comment: null,
     isAddInfo: false,
     isAddRoad: false,
@@ -161,6 +163,12 @@ const map = handleActions(
         [CLEAR_MAP] : (state, {payload: isClearMap}) => ({
            ...state,
             isClearMap: isClearMap
+        }),
+        [REMOVE_FETCHED_DATA] : ( state ) => ({
+           ...state,
+           placeInfo: null,
+           roadInfo: null,
+           buildingInfo: null,
         }),
         [UPDATE_BOOK_MARK] : (state, {payload: addedInfo}) => ({
             ...state,

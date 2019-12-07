@@ -1,76 +1,99 @@
 import React, {useCallback, useEffect, useState} from "react";
 import CommentEditor from "../../components/map/CommentEditor";
-import {Button, ListGroupItem, Row, Col, Table} from "react-bootstrap";
+import {Button, ListGroupItem, ListGroup, Row, Col, Table} from "react-bootstrap";
 import {useSelector} from "react-redux";
 import client from "../../lib/api/client";
 
-const CommentListItem = ({info, username, setLocalCommentList, newComment, userPlaceId}) => {
-
-    const onRemoveClick = useCallback(() => {
-        setLocalCommentList(newComment.filter(item => item._id !== info._id));
-        deleteComment();
-    }, [newComment]);
-
-    const deleteComment = () => {
-        const deleteInnerFunctionComment = async () => {
-            try {
-                const comment = await client.delete(`/api/comment/deleteComment/${info._id}`);
-                const userPlace = await client.patch(`/api/map/userPlace/deleteComment`, {
-                    userPlaceId : userPlaceId,
-                    commentId : info._id
-                });
-            } catch (e) {
-                console.dir(e);
-            }
-        };
-        deleteInnerFunctionComment();
-    };
+const CommentContainer = ({commentList, UpdateCommentList, placeObjectId}) => {
 
     return (
-        <Row>
-            <Col sm={9}>
-                <ListGroupItem key={info._id}>{info.title}</ListGroupItem>
-            </Col>
-            <Col sm={3}>
-                {username === info.username && <Button key={info._id} variant="danger"
-                                                      onClick={onRemoveClick}>삭제</Button>}
-            </Col>
-        </Row>
+        <div style={{paddingTop: "5px"}}>
+            <CommentList commentList={commentList} UpdateCommentList={UpdateCommentList} placeObjectId={placeObjectId}/>
+            <CommentEditor commentList={commentList} UpdateCommentList={UpdateCommentList}
+                           placeObjectId={placeObjectId}/>
+        </div>
     );
 };
 
-const CommentList = ({info, newComment, setLocalCommentList}) => {
-    const {username} = useSelector(({user}) => ({
-        username: user.user.username
-    }));
-
+const CommentList = ({commentList, UpdateCommentList, placeObjectId}) => {
 
     return (
         <>
-            {newComment && newComment.map((inf) => (
-                <CommentListItem info={inf} key={inf._id} username={username}
-                                 setLocalCommentList={setLocalCommentList} newComment={newComment}
-                                userPlaceId={info._id}/>
+            {commentList && commentList.map((comment, index) => (
+                <CommentListItem commentList={commentList} placeObjectId={placeObjectId}
+                                 comment={comment} key={index} UpdateCommentList={UpdateCommentList}/>
             ))}
             <hr/>
         </>
     )
 };
 
-const CommentContainer = ({info, isCloseBox, setUpdateCommentList}) => {
-    const [localCommentList, setLocalCommentList] = useState(info.commentList);
+const CommentListItem = ({comment, commentList, UpdateCommentList, placeObjectId}) => {
+    const [warningClicked, setWarningClicked] = useState(false);
+    const {username} = useSelector(({user}) => ({
+        username : user.user.username
+    }));
+
+    const onRemoveClick = useCallback(() => {
+        UpdateCommentList(commentList.filter(item => item._id !== comment._id));
+        deleteComment();
+    }, [commentList]);
+
+    const onWarningClick = useCallback(() => {
+        let arr = [];
+        commentList.forEach(function(element){
+            if(element._id === comment._id){
+                arr = arr.concat({
+                    ...element, status : { block: false, warningCount : element.status.warningCount + 1}
+                })
+            } else {
+                arr = arr.concat(element);
+            }
+        });
+        UpdateCommentList(arr);
+    }, [commentList]);
+
+    const deleteComment = () => {
+        const deleteInnerFunctionComment = async () => {
+            try {
+                //const comment = await client.delete(`/api/comment/deleteComment/${info._id}`);
+                const userPlace = await client.patch(`/api/map/userPlace/deleteComment`, {
+                    //userPlaceId: userPlaceId,
+                    //commentId: info._id
+                });
+            } catch (e) {
+                console.dir(e);
+            }
+        };
+        //deleteInnerFunctionComment();
+    };
 
     useEffect(() => {
-        console.dir(info);
-    }, [])
+        console.dir(comment);
+    }, [comment]);
+
+
+    if(!comment) return null;
 
     return (
-        <>
-            <CommentList info={info} newComment={localCommentList} setLocalCommentList={setLocalCommentList}/>
-            <CommentEditor info={info} setLocalCommentList={setLocalCommentList}
-                           isCloseBox={isCloseBox} setUpdateCommentList={setUpdateCommentList}/>
-        </>
+        <Row>
+            <Col sm={9}>
+                {!comment.status.block && (comment.status.warningCount === 0 )
+                    && <ListGroup.Item>{comment.title}</ListGroup.Item>}
+                {!comment.status.block && (comment.status.warningCount > 0  )
+                && <ListGroup.Item variant="warning">{comment.title}</ListGroup.Item>}
+                {comment.status.block
+                    && <ListGroup.Item variant="danger">{comment.title}</ListGroup.Item>}
+            </Col>
+            <Col sm={3}>
+                {username === comment.username ?
+                    <Button variant="danger" onClick={onRemoveClick}>삭제</Button>
+                    : <Button variant="warning" onClick={onWarningClick}>신고</Button>}
+
+            </Col>
+        </Row>
     );
 };
+
 
 export default CommentContainer;

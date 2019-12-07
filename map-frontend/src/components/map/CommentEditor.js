@@ -4,26 +4,12 @@ import client from "../../lib/api/client";
 import {GoPlus} from 'react-icons/go';
 import {useSelector} from "react-redux";
 
-const CommentEditor = ({info, setLocalCommentList, setUpdateCommentList, isCloseBox}) => {
+const CommentEditor = ({commentList, UpdateCommentList, placeObjectId}) => {
     const [input, setInput] = useState('');
-    const [localComment, setLocalComment] = useState(info.commentList);
 
     const {username} = useSelector(({user}) => ({
         username: user.user.username
     }));
-
-    useEffect(() => {
-        //console.log('comment editor'); console.dir(isCloseBox);
-        if(isCloseBox) {
-            console.log('저장되었습니다');
-            saveData();
-        }
-    }, [isCloseBox]);
-
-    useEffect( () => {
-        setUpdateCommentList(localComment);
-        setLocalCommentList(localComment);
-    }, [localComment]);
 
     const onChange = useCallback(
         e => {
@@ -40,29 +26,15 @@ const CommentEditor = ({info, setLocalCommentList, setUpdateCommentList, isClose
 
     const onClick = useCallback(
         () => {
-            setLocalComment(localComment.concat({
+            UpdateCommentList(commentList.concat({
                 title: input,
                 body: input,
                 username: username,
-                objectID: info._id,
+                objectID: placeObjectId,
+                status: { block : false, warningCount: 0}
             }));
             setInput('');
         }, [input]);
-
-    const saveData = useCallback(
-        () => {
-            const uploadData = async () => {
-                try {
-                    const response = await client.post(`api/comment/${info._id}`, (
-                            localComment
-                    ));
-                    //console.dir(response.data);
-                } catch (e) {
-                    console.dir(e);
-                }
-            };
-            uploadData();
-        }, [localComment]);
 
     return (
         <Row>

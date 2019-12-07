@@ -32,6 +32,6 @@ UserPlaceSchema.statics.findByObjectID = function(id) {
     return this.find({_id: id});
 };
 
-const UserPlace = mongoose.model('userMarker', UserPlaceSchema);
+const UserPlace = mongoose.model('userPlace', UserPlaceSchema);
 
 export default UserPlace;
