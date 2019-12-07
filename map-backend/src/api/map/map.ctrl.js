@@ -189,7 +189,7 @@ export const updateUserBuildingComment = async ctx => {
                 title: title,
                 body: body,
                 username: username,
-                status: {block: false, warningCount: 0}
+                status: {block: false, warningCount: 0, username : []}
             });
             comment.save();
             arr = arr.concat(comment);
@@ -224,7 +224,7 @@ export const updateUserPlaceComment = async ctx => {
                 title: title,
                 body: body,
                 username: username,
-                status: {block: false, warningCount: 0}
+                status: {block: false, warningCount: 0, username: []}
             });
             comment.save();
             arr = arr.concat(comment);
@@ -399,12 +399,18 @@ export const updateUserPlaceRecommend = async ctx => {
     }
 };
 
-export const updateUserPlaceCommentWarning = async ctx => {
+export const updateUserCommentWarning = async ctx => {
     const {id} = ctx.params;
-    const {commentList} = ctx.request.body;
+    const {commentList, type} = ctx.request.body;
     //console.dir(commentList);
     try {
-        const result = await UserPlace.findOne({_id: id}).exec();
+        let result;
+        switch(type){
+            case 'place' : result = await UserPlace.findOne({_id: id}).exec(); break;
+            case 'road' : result = await UserRoad.findOne({_id: id}).exec(); break;
+            case 'building' : result = await UserBuilding.findOne({_id: id}).exec(); break;
+        }
+
         if (!result) {
             ctx.status = 404;
             return;
@@ -413,11 +419,10 @@ export const updateUserPlaceCommentWarning = async ctx => {
         //이미 등록된 이름이 있는지 확인해보기
         let inUserNameList = false;
         result._doc.commentList.forEach(function (element) {
-            if (element._id.toString() === commentId) {
-                element.status.username.forEach(function (elementName) {
-                    if (elementName === username) inUserNameList = true;
-                });
-            }
+            const {commentId, username} = element;
+            element.status.username.forEach(function (elementName) {
+                if (elementName === username) inUserNameList = true;
+            });
         });
 
         //이미 신고했으면 리턴
@@ -426,76 +431,15 @@ export const updateUserPlaceCommentWarning = async ctx => {
             return;
         }
 
-        commentList.forEach(function (comment) {
-            console.dir(comment);
-            //const {status, body, title, username, _id} = comment;
-        });
-    }
-        catch(e){
-            ctx.throw(500, e);
+        const nextData = {...result._doc, commentList : commentList};
+        let result2;
+        switch(type){
+            case 'place' : await UserPlace.findOneAndUpdate({_id: id}, nextData, {new:true}).exec(); break;
+            case 'road' : await UserRoad.findOneAndUpdate({_id: id}, nextData, {new:true}).exec(); break;
+            case 'building' : await UserBuilding.findOneAndUpdate({_id: id}, nextData, {new:true}).exec(); break;
         }
-    }
-
-    /*
-    let arr = [];
-    commentList.forEach(function(comment){
-        const {status, body, title, username, _id} = comment;
-
-    });
-
-
-    try {
-        const result = await UserPlace.findOne({_id: id}).exec();
-        if (!result) {
-            ctx.status = 404;
-            return;
-        }
-
-        //이미 등록된 이름이 있는지 확인해보기
-        let inUserNameList = false;
-        result._doc.commentList.forEach(function (element) {
-            if (element._id.toString() === commentId) {
-                element.status.username.forEach(function (elementName) {
-                    if (elementName === username) inUserNameList = true;
-                });
-            }
-        });
-
-        //이미 신고했으면 리턴
-        if (inUserNameList) {
-            ctx.status = 400;
-            return;
-        }
-
-        // 수정할 comment 찾고 수정하기
-        let find = false;
-        let fixedCommentList = [];
-        result._doc.commentList.forEach(function (element) {
-            if (element._id.toString() === commentId) {
-                find = true;
-                fixedCommentList = fixedCommentList.concat({
-                        ...element,
-                        status: {
-                            block: username === 'admin' && block ? block : element.status.block,
-                            warningCount: warning ? element.status.warningCount + 1 : element.status.warningCount,
-                            username: username === 'admin' ? element.status.username : element.status.username.concat(username)
-                        }
-                    }
-                )
-            }
-            if(find){
-                find = false;
-            }else{
-                fixedCommentList = fixedCommentList.concat(element);
-            }
-        });
-
-        const nextData = {...result._doc, commentList: fixedCommentList};
-        const result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true});
         ctx.body = result2;
     } catch (e) {
         ctx.throw(500, e);
     }
-
- */
-
+};

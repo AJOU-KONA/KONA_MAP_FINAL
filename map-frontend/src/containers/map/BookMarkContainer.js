@@ -35,6 +35,7 @@ const BookMarkContainer = () => {
     useEffect(() => {
         console.dir(placeList);
         console.dir(roadList);
+        console.dir(buildingList);
     }, [roadList, placeList, buildingList]);
 
     return (

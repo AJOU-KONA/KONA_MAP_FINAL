@@ -43,6 +43,6 @@ map.patch('/userPlace/recommend/:id', checkLoggedIn, mapCtrl.updateUserPlaceReco
 
 map.patch('/userPlace/deleteComment', checkLoggedIn, mapCtrl.deleteComment);
 
-map.patch('/userPlace/warningComment/:id', checkLoggedIn, mapCtrl.updateUserPlaceCommentWarning);
+map.patch('/warningComment/:id', checkLoggedIn, mapCtrl.updateUserCommentWarning);
 
 export default map;

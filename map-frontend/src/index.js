@@ -24,8 +24,7 @@ function loadUser(history) {
     try {
         const user = localStorage.getItem('user');
         if (!user) {
-            history.push('/login');
-            //return;
+            return;
         }
 
         store.dispatch(tempSetUser(user));

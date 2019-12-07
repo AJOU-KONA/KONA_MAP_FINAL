@@ -36,7 +36,6 @@ const CommentListItem = ({comment, commentList, UpdateCommentList, placeObjectId
 
     const onRemoveClick = useCallback(() => {
         UpdateCommentList(commentList.filter(item => item._id !== comment._id));
-        deleteComment();
     }, [commentList]);
 
     const onWarningClick = useCallback(() => {
@@ -52,21 +51,6 @@ const CommentListItem = ({comment, commentList, UpdateCommentList, placeObjectId
         });
         UpdateCommentList(arr);
     }, [commentList]);
-
-    const deleteComment = () => {
-        const deleteInnerFunctionComment = async () => {
-            try {
-                //const comment = await client.delete(`/api/comment/deleteComment/${info._id}`);
-                const userPlace = await client.patch(`/api/map/userPlace/deleteComment`, {
-                    //userPlaceId: userPlaceId,
-                    //commentId: info._id
-                });
-            } catch (e) {
-                console.dir(e);
-            }
-        };
-        //deleteInnerFunctionComment();
-    };
 
     useEffect(() => {
         console.dir(comment);

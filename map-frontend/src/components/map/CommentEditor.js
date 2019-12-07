@@ -31,7 +31,7 @@ const CommentEditor = ({commentList, UpdateCommentList, placeObjectId}) => {
                 body: input,
                 username: username,
                 objectID: placeObjectId,
-                status: { block : false, warningCount: 0}
+                status: { block : false, warningCount: 0, username : []}
             }));
             setInput('');
         }, [input]);

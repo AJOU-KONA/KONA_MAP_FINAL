@@ -39,6 +39,7 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
 
     const onSubmit = useCallback(
         e => {
+            console.dir('검색');
             e.preventDefault();
             dispatch(clearMap(false));
             dispatch(setSearchQuery({
@@ -57,7 +58,7 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                     {user && <Nav.Link onClick={onLogout}>로그아웃</Nav.Link>}
                     {!user && <Nav.Link href="/login">로그인</Nav.Link>}
                 </Nav>
-                <Form inline>
+                <Form inline onKeyPress={onSubmit}>
                     <Form.Group style={{paddingRight: 10}}>
                         <Button onClick={setAddInfo}><FiMapPin/></Button>
                         <div style={{paddingRight: 10}}/>

@@ -7,7 +7,7 @@ import BasicInfoViewerContainer from "./BasicInfoViewerContainer";
 import EstimateContainer from "./EstimateContainer";
 import CommentContainer from "./CommentContainer";
 import {FaStar, IoIosClose} from "react-icons/all";
-import {removeFetchedData, setCommentList, setInfoViewer} from "../../modules/map";
+import {addBookMark, removeFetchedData, setCommentList, setInfoViewer, updateBookMark} from "../../modules/map";
 import client from "../../lib/api/client";
 
 const StyledWrapper = styled.div`
@@ -62,19 +62,26 @@ const initialState = {
     visibleOnTabComment: false,
     isInBookMark: false,
     commentList: [],
-    filteredData : null,
+    filteredData: null,
 };
 
 const InfoViewerContainer = () => {
     const [localInfo, setLocalInfo] = useReducer(InfoWindowReducer, initialState);
-    const {placeInfo, roadInfo, buildingInfo, searchQueryType, storeCommentList,
-        isMarkerClicked} = useSelector(({map}) => ({
+    const {
+        placeInfo, roadInfo, buildingInfo, searchQueryType, storeCommentList,
+        isMarkerClicked, isAddBookMark, buildingList, roadList, placeList
+    } = useSelector(({map}) => ({
         searchQueryType: map.searchQuery.searchQueryType,
-        roadInfo : map.roadInfo,
+        roadInfo: map.roadInfo,
         placeInfo: map.placeInfo,
         buildingInfo: map.buildingInfo,
         storeCommentList: map.commentList,
-        isMarkerClicked: map.isMarkerClicked
+        isMarkerClicked: map.isMarkerClicked,
+        isAddBookMark: map.isAddBookMark,
+        buildingList: map.bookMark.buildingList,
+        roadList: map.bookMark.roadList,
+        placeList: map.bookMark.placeList,
+
     }));
 
     const dispatch = useDispatch();
@@ -88,84 +95,105 @@ const InfoViewerContainer = () => {
         setLocalInfo({type: 'toggleTabPosition'})
     }, []);
     const updateComment = useCallback((value) =>
-        setLocalInfo({type: 'updateComment', comment: value}),
+            setLocalInfo({type: 'updateComment', comment: value}),
         [localInfo]);
     const updateFilteredData = useCallback((data) => {
         setLocalInfo({type: 'updateFilteredData', filteredData: data});
-    },[]);
+    }, []);
     const onCloseClick = useCallback(() => {
-            console.dir(storeCommentList);
-            const uploadComment = async () => {
-                try {
-                    if(searchQueryType === 'place' )
-                        await client.patch(`/api/map/userPlace/comment/${localInfo.filteredData._id}`, {
-                            commentList : storeCommentList
-                        });
-                    if(searchQueryType === 'road' )
-                        await client.patch(`/api/map/userRoad/comment/${localInfo.filteredData._id}`, {
-                            commentList : storeCommentList
-                        });
-                    if(searchQueryType === 'building' )
-                        await client.patch(`/api/map/userBuilding/comment/${localInfo.filteredData._id}`, {
-                            commentList : storeCommentList
-                        });
-                } catch (e) {
-                    console.dir(e);
-                }
-            };
-
+        console.dir(storeCommentList);
+        const uploadComment = async () => {
+            try {
+                if (searchQueryType === 'place')
+                    await client.patch(`/api/map/userPlace/comment/${localInfo.filteredData._id}`, {
+                        commentList: storeCommentList
+                    });
+                if (searchQueryType === 'road')
+                    await client.patch(`/api/map/userRoad/comment/${localInfo.filteredData._id}`, {
+                        commentList: storeCommentList
+                    });
+                if (searchQueryType === 'building')
+                    await client.patch(`/api/map/userBuilding/comment/${localInfo.filteredData._id}`, {
+                        commentList: storeCommentList
+                    });
+            } catch (e) {
+                console.dir(e);
+            }
+        };
 
         const updateCommentWarning = async () => {
-            try{
-                switch(searchQueryType){
+            try {
+                switch (searchQueryType) {
                     case 'place': {
-                        console.dir(storeCommentList);
-
-                        await client.patch(`/api/map/userPlace/warningComment/${placeInfo._id}`, {
-                            commentList : storeCommentList
+                        await client.patch(`/api/map/warningComment/${placeInfo._id}`, {
+                            commentList: storeCommentList,
+                            type: "place"
                         });
-
-
                         break;
                     }
                     case 'road': {
-
+                        await client.patch(`/api/map/warningComment/${roadInfo._id}`, {
+                            commentList: storeCommentList,
+                            type: "road"
+                        });
+                        break;
                     }
                     case 'building': {
-
-                    }
-                    case "buindle": {
-
+                        await client.patch(`/api/map/warningComment/${buildingInfo._id}`, {
+                            commentList: storeCommentList,
+                            type: "building"
+                        });
+                        break;
                     }
                 }
-            }catch(e){
+            } catch (e) {
                 console.dir(e);
                 alert('이미 신고하셨습니다');
             }
         };
 
-
-
-            if(isMarkerClicked && storeCommentList !== []){
-                uploadComment();
-                updateCommentWarning();
-                dispatch(removeFetchedData());
-                updateComment([]);
-                dispatch(setCommentList([]));
-            }
+        if (isMarkerClicked && storeCommentList !== []) {
+            uploadComment();
+            updateCommentWarning();
+            dispatch(removeFetchedData());
+            updateComment([]);
+            dispatch(setCommentList([]));
+        }
         dispatch(setInfoViewer(false));
     }, [dispatch, isMarkerClicked, storeCommentList, searchQueryType]);
 
+    const addBookMarkClick = useCallback(() => {
+        if (!isAddBookMark) {
+            dispatch(addBookMark(true));
+        }
+        switch (searchQueryType) {
+            case 'place':
+                let updatePlace = placeList.concat(placeInfo);
+                dispatch(updateBookMark({buildingList: buildingList, roadList: roadList, placeList: updatePlace}));
+                break;
+            case 'road':
+                let updateRoad = roadList.concat(roadInfo);
+                console.dir(updateRoad);
+                dispatch(updateBookMark({buildingList: buildingList, roadList: updateRoad, placeList: placeList}));
+                break;
+            case 'building':
+                let updateBuilding = buildingList.concat(buildingInfo);
+                console.dir(updateBuilding);
+                dispatch(updateBookMark({buildingList: updateBuilding, roadList: roadList, placeList: placeList}));
+                break;
+        }
+    }, [isAddBookMark, placeList, roadList, buildingList, searchQueryType, placeInfo, roadInfo, buildingInfo]);
+
     useEffect(() => {
-        if(searchQueryType === 'place' && placeInfo) updateFilteredData(placeInfo);
-        if(searchQueryType === 'road' && roadInfo) updateFilteredData(roadInfo);
-        if(searchQueryType === 'building' && buildingInfo) updateFilteredData(buildingInfo);
+        if (searchQueryType === 'place' && placeInfo) updateFilteredData(placeInfo);
+        if (searchQueryType === 'road' && roadInfo) updateFilteredData(roadInfo);
+        if (searchQueryType === 'building' && buildingInfo) updateFilteredData(buildingInfo);
     }, [placeInfo, roadInfo, buildingInfo, searchQueryType]);
 
     useEffect(() => {
-        if(localInfo.filteredData ) console.dir(localInfo.filteredData.commentList);
-        if(localInfo.filteredData && localInfo.filteredData.commentList.length !== 0) {
-                updateComment(localInfo.filteredData.commentList);
+        if (localInfo.filteredData) console.dir(localInfo.filteredData.commentList);
+        if (localInfo.filteredData && localInfo.filteredData.commentList.length !== 0) {
+            updateComment(localInfo.filteredData.commentList);
         }
     }, [localInfo.filteredData]);
 
@@ -173,14 +201,10 @@ const InfoViewerContainer = () => {
         dispatch(setCommentList(localInfo.commentList));
     }, [localInfo.commentList]);
 
-    useEffect(() => {
-        console.dir(localInfo.commentList);
-    }, [localInfo.commentList]);
-
-    if(searchQueryType === 'road' && !localInfo.filteredData) return null;
-    if(searchQueryType === 'place' && !localInfo.filteredData) return null;
-    if(searchQueryType === 'building' && !localInfo.filteredData) return null;
-    if(!localInfo.filteredData ) return null;
+    if (searchQueryType === 'road' && !localInfo.filteredData) return null;
+    if (searchQueryType === 'place' && !localInfo.filteredData) return null;
+    if (searchQueryType === 'building' && !localInfo.filteredData) return null;
+    if (!localInfo.filteredData) return null;
 
 
     return (
@@ -202,29 +226,30 @@ const InfoViewerContainer = () => {
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey="estimate-user"
-                                            onSelect={toggleTabEstimate}
+                                              onSelect={toggleTabEstimate}
                                     >평가</Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey="comment-user"
-                                            onSelect={toggleTabComment}
+                                              onSelect={toggleTabComment}
                                     >댓글</Nav.Link>
                                 </Nav.Item>
-                                <Button variant="white" size="xl"><FaStar/></Button>
+                                <Button variant="white" size="xl" onClick={addBookMarkClick}><FaStar/></Button>
                                 <Button variant="white" onClick={onCloseClick} size="xl"><IoIosClose/></Button>
                             </Nav>
                             <BottomLine/>
-                            {localInfo.visibleOnTabPosition && <BasicInfoViewerContainer info={localInfo.filteredData}/>}
+                            {localInfo.visibleOnTabPosition &&
+                            <BasicInfoViewerContainer info={localInfo.filteredData}/>}
                             {localInfo.visibleOnTabEstimate && <EstimateContainer info={localInfo.filteredData}/>}
                             {localInfo.visibleOnTabComment &&
                             <CommentContainer commentList={localInfo.commentList} UpdateCommentList={updateComment}
-                                            placeObjectId={localInfo.filteredData._id}/>}
+                                              placeObjectId={localInfo.filteredData._id}/>}
                         </div>
                     </Col>
                 </Row>
             </div>
         </StyledWrapper>
-);
+    );
 };
 
 export default InfoViewerContainer;
