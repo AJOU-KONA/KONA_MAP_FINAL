@@ -71,7 +71,8 @@ const CarouselContainer = ({info}) => {
             <div>
                 {localInfo.visibleOnTabPictures &&
                 <Carousel>
-                    {info.imageUrl.map(url => (
+
+                    {info.imageUrl ? info.imageUrl.map(url => (
                         <Carousel.Item key={url}>
                             <img
                                 width="100%"
@@ -79,7 +80,7 @@ const CarouselContainer = ({info}) => {
                                 src={url}
                             />
                         </Carousel.Item>
-                    ))}
+                    )) : null}
                 </Carousel>}
                 {localInfo.visibleOnTabYoutube &&
                 <YoutubeContainer youtubeVideoId={info.youtubeVideoId}/>}

@@ -17,6 +17,7 @@ const UserRoadSchema = new Schema({
     block: Number,
     recommend: { good: Number, bad : Number, username : [String] },
     youtubeVideoId: String,
+    address : { stringAddress : String, splitedAddress : [String] }
 });
 
 UserRoadSchema.statics.findByUsername = function(username){

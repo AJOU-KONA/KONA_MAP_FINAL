@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import styled from "styled-components";
 import {useSelector} from "react-redux";
 import {Button} from "react-bootstrap";
-import UserBundleModal from "../../components/map/UserBundleModal";
+import BundleModal from "../../components/map/BundleModal";
 
 const StyledBookMarkWrapper = styled.div`
     z-index : 10;
@@ -40,8 +40,8 @@ const BookMarkContainer = () => {
 
     return (
         <StyledBookMarkWrapper>
-            {visibleModal && <UserBundleModal placeList={placeList}
-            roadList={roadList} buildingList={buildingList}/>}
+            {visibleModal && <BundleModal placeList={placeList}
+                                          roadList={roadList} buildingList={buildingList}/>}
             {placeList && <BookMarkPlace placeList={placeList}/>}
             <hr/>
             {roadList && <BookMarkRoad roadList={roadList}/>}

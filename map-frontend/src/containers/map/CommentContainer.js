@@ -28,8 +28,7 @@ const CommentList = ({commentList, UpdateCommentList, placeObjectId}) => {
     )
 };
 
-const CommentListItem = ({comment, commentList, UpdateCommentList, placeObjectId}) => {
-    const [warningClicked, setWarningClicked] = useState(false);
+const CommentListItem = ({comment, commentList, UpdateCommentList}) => {
     const {username} = useSelector(({user}) => ({
         username : user.user.username
     }));

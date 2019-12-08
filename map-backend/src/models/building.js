@@ -21,6 +21,7 @@ const BuildingSchema = new Schema({
     youtubeVideoId: String,
     buildingPosition: [],
     floor : Number,
+    address : { stringAddress : String, splitedAddress : [String] }
 });
 
 BuildingSchema.statics.findByUsername = function(username){

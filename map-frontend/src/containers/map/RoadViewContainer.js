@@ -169,7 +169,7 @@ const RoadViewListItem = ({road}) => {
     return (
         <>
             {localInfo.visibleOnMouseOver && !localInfo.visibleInfoWindow &&
-            <InfoWindow position={getRoadInfoWindowPosition(road)}>
+            <InfoWindow position={getRoadInfoWindowPosition(road)} options={{disableAutoPan : true}}>
                 <CardComponent info={road}/>
             </InfoWindow>}
             {/*

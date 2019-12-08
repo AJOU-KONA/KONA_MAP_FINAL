@@ -2,11 +2,10 @@ import React, {useCallback, useEffect, useReducer, useState} from 'react'
 import {
     GoogleMap,
     DrawingManager,
-    LoadScriptNext, InfoWindow, Rectangle,
+    LoadScriptNext, InfoWindow, Rectangle, Data,
 } from '@react-google-maps/api'
 import {Row, Col, Button} from 'react-bootstrap';
 import UserMarker from "../../components/map/UserMarker";
-import MarkerInfo from "../../components/map/MarkerInfo";
 import MapCircle, {MapCircleInfo} from "../../components/map/MapCircle";
 import {useSelector, useDispatch} from "react-redux";
 import UserInfoOnMapContainer from "./UserInfoOnMapContainer";
@@ -21,6 +20,8 @@ import BookMarkConainer from "./BookMarkContainer";
 import InfoViewerContainer from "./InfoViewerContainer";
 import BuildingRemarkContainer from "./BuildingRemarkContainer";
 import BuildingModal from "../../components/map/BuildingModal";
+import sig2 from '../../GeoJSON/sig2.json';
+import {fetchBuildingInfo, removeFetchedData} from "../../modules/map";
 
 const StyledMapContainerWrapper = styled.div`
     position: fixed;
@@ -65,13 +66,14 @@ const initialState = {
     currentUserLocation: null,
     drawingMode: null,
     circle: null,
-    insertInfoBox : null,
-    userLocOnMap : null,
-    center : initialPosition,
+    insertInfoBox: null,
+    userLocOnMap: null,
+    center: initialPosition,
     zoom: 15,
     isAddRoadInfo: false,
     isAddBuildingInfo: false,
-    rectangleList : [],
+    rectangleList: [],
+    dataObject: null
 };
 
 const infoReducer = (state, action) => {
@@ -110,10 +112,10 @@ const infoReducer = (state, action) => {
             return {...state, userLocOnMap: action.userLocOnMap}
         }
         case 'updateCenter' : {
-            return {...state, center : action.center}
+            return {...state, center: action.center}
         }
         case 'updateZoom' : {
-            return {...state, zoom : action.zoom}
+            return {...state, zoom: action.zoom}
         }
         case 'updateIsAddRoadInfo' : {
             return {...state, isAddRoadInfo: action.isAddRoadInfo}
@@ -122,10 +124,13 @@ const infoReducer = (state, action) => {
             return {...state, isAddBuildingInfo: !state.isAddBuildingInfo}
         }
         case 'updateRectangle' : {
-            return {...state, rectangleList : state.rectangleList.concat(action.rectangle)}
+            return {...state, rectangleList: state.rectangleList.concat(action.rectangle)}
         }
         case 'resetRectangle' : {
             return {...state, rectangleList: []}
+        }
+        case 'getDataObject' : {
+            return {...state, dataObject: action.dataObject}
         }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
@@ -179,7 +184,7 @@ const MapContainer = () => {
         }, []);
 
         const updateCircle = useCallback((value) => {
-            setLocalInfo({type : 'updateCircle', circle: value});
+            setLocalInfo({type: 'updateCircle', circle: value});
         }, []);
 
         const updateInsertInfoBox = useCallback((value) => {
@@ -191,7 +196,7 @@ const MapContainer = () => {
         }, []);
 
         const updateCenter = useCallback((value) => {
-            setLocalInfo({type: 'updateCenter', center : value});
+            setLocalInfo({type: 'updateCenter', center: value});
         }, []);
 
         const updateZoom = useCallback((value) => {
@@ -208,7 +213,30 @@ const MapContainer = () => {
 
         const updateIsAddBuildingInfo = useCallback(() => {
             setLocalInfo({type: 'updateIsAddBuildingInfo'});
-        }, []);
+        }, [isAddBuilding]);
+        const getDataObject = useCallback((e) => {
+            setLocalInfo({type: 'getDataObject', dataObject: e})
+        }, [localInfo.map]);
+
+        useEffect(() => {
+            const loadGeoJsonFunction = async () => {
+                try {
+                    //console.dir(localInfo.dataObject);
+                    await localInfo.dataObject.loadGeoJson(sig2);
+                    await localInfo.dataObject.setStyle({
+                        marker: '',
+                    });
+                    //await localInfo.dataObject.setMap(localInfo.map);
+                } catch (e) {
+                    console.dir(e)
+                }
+            };
+            if (localInfo.dataObject) {
+
+                loadGeoJsonFunction();
+                console.dir('geojson 로딩 완료');
+            }
+        }, [localInfo.dataObject]);
 
         const onMapClick = useCallback(e => {
             console.dir('클릭');
@@ -305,9 +333,11 @@ const MapContainer = () => {
                 setRoadList(roadList.concat(arr));
             }, [setRoadList, roadList]);
 
-        const onRectangleComplete = useCallback( e => {
-            const rectangle = { east : e.bounds.ka.h, west : e.bounds.ka.g,
-                                north: e.bounds.pa.h, south: e.bounds.pa.g };
+        const onRectangleComplete = useCallback(e => {
+            const rectangle = {
+                east: e.bounds.ka.h, west: e.bounds.ka.g,
+                north: e.bounds.pa.h, south: e.bounds.pa.g
+            };
             updateRectangle(rectangle);
         }, [updateRectangle]);
 
@@ -317,16 +347,20 @@ const MapContainer = () => {
                 else updateIsAddRoadInfo(false);
             }, [updateIsAddRoadInfo, localInfo.isAddRoadInfo]);
 
+        useEffect(() => {
+            console.dir(localInfo.dataObject);
+        }, [localInfo.dataObject]);
+
         return (
             <Row>
                 {localInfo.circle && <MapCircleInfo setRadius={updateRadius} onKeyPress={onKeyPressForRadius}
-                                          radius={localInfo.radius}/>}
+                                                    radius={localInfo.radius}/>}
                 {isAddRoad && <RoadDropDownButton addRoadInfo={addRoadInfo}/>}
                 {searchQueryOnMap && searchQueryType === 'road' && <RoadRemarkContainer/>}
 
                 {isAddBookMark && <BookMarkConainer/>}
                 {isMarkerClicked && <InfoViewerContainer/>}
-                {isAddBuilding && <BuildingRemarkContainer addBuildingInfo={updateIsAddBuildingInfo} />}
+                {isAddBuilding && <BuildingRemarkContainer addBuildingInfo={updateIsAddBuildingInfo}/>}
 
                 <StyledMapContainerWrapper>
                     <Col>
@@ -352,8 +386,6 @@ const MapContainer = () => {
                                     gestureHandling: "cooperative",
                                 }}
                             >
-
-
                                 {!localInfo.drawingMode && <DrawingManager drawingMode={localInfo.drawingMode}
                                                                            options={{
                                                                                polylineOptions: getPolyLineOption(roadType),
@@ -364,14 +396,17 @@ const MapContainer = () => {
                                                                            onPolylineComplete={onPolylineComplete}
                                                                            onLoad={getPolyLineObject}
                                 />}
-                                {localInfo.circle && <MapCircle position={localInfo.userPosition} radius={localInfo.radius}/>}
-                                {localInfo.insertInfoBox && <UserMarker position={localInfo.userPosition} circle={localInfo.circle}
-                                                              setCircle={updateCircle} onKeyPress={onKeyPressForRadius}
-                                                              setRadius={updateRadius} radius={localInfo.radius}
+                                {localInfo.circle &&
+                                <MapCircle position={localInfo.userPosition} radius={localInfo.radius}/>}
+                                {localInfo.insertInfoBox &&
+                                <UserMarker position={localInfo.userPosition} circle={localInfo.circle}
+                                            setCircle={updateCircle} onKeyPress={onKeyPressForRadius}
+                                            setRadius={updateRadius} radius={localInfo.radius}
                                 />}
 
                                 {searchQueryOnMap && !isClearMap && <UserInfoOnMapContainer zoom={localInfo.zoom}/>}
-                                {localInfo.userLocOnMap && <UserMarker position={localInfo.userLocOnMap} circle={-1} animation={true}/>}
+                                {localInfo.userLocOnMap &&
+                                <UserMarker position={localInfo.userLocOnMap} circle={-1} animation={true}/>}
                                 {localInfo.fetchedRoadList && <RoadViewContainer/>}
                                 {visibleRoad &&
                                 <RoadControlContainer uploadRoadList={uploadRoadList} roadList={roadList}

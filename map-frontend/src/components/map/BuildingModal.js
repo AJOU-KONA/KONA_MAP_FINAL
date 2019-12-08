@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
-import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col} from "react-bootstrap";
+import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col, ListGroup} from "react-bootstrap";
 import {useSelector} from "react-redux";
 import client from "../../lib/api/client";
 import ImageUpload from "../common/ImageUpload";
@@ -59,6 +59,8 @@ const initialState = {
     buildingPosition: null,
     floor: null,
     floorArray: [],
+    splitedAddress: [],
+    stringAddress: null,
 };
 
 const infoReducer = (state, action) => {
@@ -122,6 +124,12 @@ const infoReducer = (state, action) => {
         case 'setFloorArray': {
             return {...state, floorArray: action.arr};
         }
+        case 'updateSplitedAddress' : {
+            return {...state, splitedAddress: action.splitedAddress}
+        }
+        case 'updateStringAddress' : {
+            return {...state, stringAddress: action.stringAddress}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
@@ -176,10 +184,12 @@ const BuildingModal = ({buildingList, closeModal}) => {
         }
         setLocalInfo({type: 'setFloorArray', arr: arr});
     };
-
-    useEffect(() => {
-        console.dir(localInfo.floorArray);
-    }, [localInfo.floorArray]);
+    const updateFormattedAddress = (arr) => {
+        setLocalInfo({type: 'updateSplitedAddress', splitedAddress: arr});
+    };
+    const updateStringAddress = (address) => {
+        setLocalInfo({type: 'updateStringAddress', stringAddress: address});
+    };
 
     const handleShow = useCallback(() => {
         if (!show) setShow(true);
@@ -204,7 +214,7 @@ const BuildingModal = ({buildingList, closeModal}) => {
                     youtubeUrl: localInfo.youtubeUrl,
                     buildingPosition: localInfo.buildingPosition,
                     floor: localInfo.floor,
-
+                    address: {stringAddress: localInfo.stringAddress, splitedAddress: localInfo.splitedAddress}
                 }));
             };
             saveData();
@@ -215,19 +225,29 @@ const BuildingModal = ({buildingList, closeModal}) => {
     useEffect(() => {
         updateUserName(username);
         updateBuildingList();
-        console.dir(localInfo.floor);
-    }, [username, localInfo.floor]);
+    }, [username]);
 
     useEffect(() => {
-        return () => {
-            console.dir('hello');
+        console.dir(localInfo.buildingPosition);
+    }, [localInfo.buildingPosition]);
+
+    useEffect(() => {
+        const getAddress = async () => {
+            try {
+                const result = await client.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=
+                ${buildingList[0].north},${buildingList[0].east}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`);
+                console.dir(result.data.results[0].formatted_address);
+                let arr = result.data.results[0].formatted_address.split(" ");
+                console.dir(arr);
+                //console.dir(result.data);
+                updateStringAddress(result.data.results[0].formatted_address);
+                updateFormattedAddress(arr);
+            } catch (e) {
+                console.dir(e)
+            }
         };
-    }, []);
-
-    useEffect(() => {
-        console.dir(localInfo.buildingList);
-    }, [localInfo.buildingList]);
-
+        getAddress();
+    }, [buildingList]);
 
     return (
         <>
@@ -237,11 +257,6 @@ const BuildingModal = ({buildingList, closeModal}) => {
                 <ModalTitle><strong>위치 정보 입력</strong></ModalTitle>
                 <ModalBody>
                     <Form>
-                        <Form.Group controlId="floor">
-                            <Form.Label>층수</Form.Label>
-                            <Form.Control placeholder="층수를 입력해주세요" onChange={updateFloor}/>
-                        </Form.Group>
-
                         <Form.Group controlId="photo">
                             <Form.Label>사진</Form.Label>
                             <ImageUpload updateImageUrl={updateImageUrl}/>
@@ -253,7 +268,6 @@ const BuildingModal = ({buildingList, closeModal}) => {
                         </Form.Group>
                     </Form>
                     <Form>
-
 
                         <Form.Group controlId="name">
                             <Form.Label>이름</Form.Label>
@@ -273,8 +287,14 @@ const BuildingModal = ({buildingList, closeModal}) => {
                                           onChange={updateDescription}/>
                         </Form.Group>
 
+                        <Form.Group controlId="floor">
+                            <Form.Label>층수</Form.Label>
+                            <Form.Control placeholder="층수를 입력해주세요" onChange={updateFloor}/>
+                        </Form.Group>
+
                         <Form.Group controlId="detailedPosition">
                             <Form.Label>세부 위치</Form.Label>
+                            <ListGroup.Item>{localInfo.stringAddress}</ListGroup.Item>
                             <Form.Control placeholder="ex) 팔달관 근처, 도서관 정문 앞" name="detailedDescription"
                                           as="textarea"
                                           onChange={updateDetailedDescription}/>

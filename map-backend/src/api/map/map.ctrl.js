@@ -9,15 +9,15 @@ import comment from "../comment";
 exports.makeUserPlace = async ctx => {
     const {
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, radius, imageUrl, youtubeUrl
+        primaryPositionType, secondaryPositionType, radius, imageUrl, youtubeUrl, address
     } = ctx.request.body;
 
-    let index = youtubeUrl.indexOf('v=');
-    let youtubeVideoId = youtubeUrl.substring(index + 2, youtubeUrl.length);
+    let index = youtubeUrl ? youtubeUrl.indexOf('v=') : null;
+    let youtubeVideoId = index ? youtubeUrl.substring(index + 2, youtubeUrl.length) : null;
     const userPlace = new UserPlace({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, radius, imageUrl, block: 0,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId
+        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address
     });
     try {
         await userPlace.save();
@@ -101,14 +101,14 @@ exports.findUserPlace = async ctx => {
 exports.makeUserRoad = async ctx => {
     const {
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, roadInfo, imageUrl, youtubeUrl
+        primaryPositionType, secondaryPositionType, roadInfo, imageUrl, youtubeUrl, address
     } = ctx.request.body;
-    let index = youtubeUrl.indexOf('v=');
-    let youtubeVideoId = youtubeUrl.substring(index + 2, youtubeUrl.length);
+    let index = youtubeUrl ? youtubeUrl.indexOf('v=') : null;
+    let youtubeVideoId = index ? youtubeUrl.substring(index + 2, youtubeUrl.length) : null;
     const userRoad = new UserRoad({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, roadInfo, imageUrl, block: 0,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId
+        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address
     });
     try {
         await userRoad.save();
@@ -272,14 +272,14 @@ export const makeUserBuilding = async ctx => {
     const {
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, imageUrl, youtubeUrl, buildingPosition,
-        roughMapUrl
+        roughMapUrl, address
     } = ctx.request.body;
-    let index = youtubeUrl.indexOf('v=');
-    let youtubeVideoId = youtubeUrl.substring(index + 2, youtubeUrl.length);
+    let index = youtubeUrl ? youtubeUrl.indexOf('v=') : null;
+    let youtubeVideoId = index ? youtubeUrl.substring(index + 2, youtubeUrl.length) : null;
     const userRoad = new UserBuilding({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, imageUrl, block: 0, buildingPosition,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, roughMapUrl
+        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, roughMapUrl, address
     });
     try {
         await userRoad.save();
@@ -292,13 +292,15 @@ export const makeUserBuilding = async ctx => {
 export const makeUserBundle = async ctx => {
     const {
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeUrl
+        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeUrl,
+        address
     } = ctx.request.body;
     let index = youtubeUrl.indexOf('v=');
     let youtubeVideoId = youtubeUrl.substring(index + 2, youtubeUrl.length);
     const userBundle = new UserBundle({
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeVideoId
+        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeVideoId,
+        address
     });
     try {
         await userBundle.save();

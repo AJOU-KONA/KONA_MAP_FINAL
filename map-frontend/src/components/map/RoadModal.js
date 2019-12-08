@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
-import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col} from "react-bootstrap";
+import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col, ListGroup} from "react-bootstrap";
 import {useSelector} from "react-redux";
 import client from "../../lib/api/client";
 import ImageUpload from "../common/ImageUpload";
@@ -9,20 +9,30 @@ import MapTagBox from "./MapTagBox";
 
 const selectOptions = {
     'mainRoad': ['4차로', '3차로', '2차로', '포장도로'],
-    'smallRoad' : ['지름길', '오솔길', '산길', '나무길'],
-    'travelRoad' : ['홀로 여행', '도보여행', '테마여행', '자전거여행', '반려견과 함께 여행'],
-    'foodRoad': [ '한식', '양식', '중식', '혼합', '기타'],
-    'sightSeeingRoad' : ['문화', '건축물', '음악'],
+    'smallRoad': ['지름길', '오솔길', '산길', '나무길'],
+    'travelRoad': ['홀로 여행', '도보여행', '테마여행', '자전거여행', '반려견과 함께 여행'],
+    'foodRoad': ['한식', '양식', '중식', '혼합', '기타'],
+    'sightSeeingRoad': ['문화', '건축물', '음악'],
 };
 
 const SecondarySelect = ({primarySelect}) => {
     let secondOption;
     switch (primarySelect) {
-        case 'mainRoad' : secondOption = selectOptions.mainRoad; break;
-        case 'smallRoad' : secondOption = selectOptions.smallRoad; break;
-        case 'travelRoad': secondOption = selectOptions.travelRoad; break;
-        case 'foodRoad' : secondOption = selectOptions.foodRoad; break;
-        case 'sightSeeingRoad' : secondOption = selectOptions.sightSeeingRoad; break;
+        case 'mainRoad' :
+            secondOption = selectOptions.mainRoad;
+            break;
+        case 'smallRoad' :
+            secondOption = selectOptions.smallRoad;
+            break;
+        case 'travelRoad':
+            secondOption = selectOptions.travelRoad;
+            break;
+        case 'foodRoad' :
+            secondOption = selectOptions.foodRoad;
+            break;
+        case 'sightSeeingRoad' :
+            secondOption = selectOptions.sightSeeingRoad;
+            break;
         default :
             secondOption = selectOptions.mainRoad;
     }
@@ -42,10 +52,13 @@ const initialState = {
     tags: [],
     primaryPositionType: "mainRoad",
     secondaryPositionType: "4차로",
-    roadInfo : null,
-    username : null,
-    imageUrl : null,
+    roadInfo: null,
+    username: null,
+    imageUrl: null,
     youtubeUrl: null,
+    splitedAddress: [],
+    stringAddress: null,
+
 };
 
 const infoReducer = (state, action) => {
@@ -74,7 +87,7 @@ const infoReducer = (state, action) => {
             return {...state, youtubeUrl: action.youtubeUrl}
         }
         case 'updateRoadInfo' : {
-            return {...state, roadInfo : action.roadInfo}
+            return {...state, roadInfo: action.roadInfo}
         }
         case 'updateTags': {
             return {...state, tags: action.tags}
@@ -97,13 +110,19 @@ const infoReducer = (state, action) => {
         case 'updateImageUrl' : {
             return {...state, imageUrl: action.imageUrl}
         }
+        case 'updateSplitedAddress' : {
+            return {...state, splitedAddress: action.splitedAddress}
+        }
+        case 'updateStringAddress' : {
+            return {...state, stringAddress: action.stringAddress}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
     }
 };
 
-const RoadModal = ( {roadPath}) => {
+const RoadModal = ({roadPath}) => {
     const [localInfo, setLocalInfo] = useReducer(infoReducer, initialState);
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [show, setShow] = useState(true);
@@ -126,16 +145,22 @@ const RoadModal = ( {roadPath}) => {
         setLocalInfo({type: 'updateSecondaryPositionType', secondaryPositionType: e.target.value});
     };
     const updateRoadInfo = value => {
-        setLocalInfo( {type: 'updateRoadInfo', roadInfo: value});
+        setLocalInfo({type: 'updateRoadInfo', roadInfo: value});
     };
     const updateUserName = () => {
-        setLocalInfo( {type: 'updateUserName', username: username});
+        setLocalInfo({type: 'updateUserName', username: username});
     };
     const updateImageUrl = (imageUrl) => {
-        setLocalInfo({type: 'updateImageUrl', imageUrl : imageUrl});
+        setLocalInfo({type: 'updateImageUrl', imageUrl: imageUrl});
     };
     const updateYoutubeUrl = (e) => {
         setLocalInfo({type: 'updateYoutubeUrl', youtubeUrl: e.target.value});
+    };
+    const updateFormattedAddress = (arr) => {
+        setLocalInfo({type: 'updateSplitedAddress', splitedAddress: arr});
+    };
+    const updateStringAddress = (address) => {
+        setLocalInfo({type: 'updateStringAddress', stringAddress: address});
     };
 
     const handleShow = useCallback(() => {
@@ -158,7 +183,8 @@ const RoadModal = ( {roadPath}) => {
                     username: localInfo.username,
                     roadInfo: localInfo.roadInfo,
                     imageUrl: localInfo.imageUrl,
-                    youtubeUrl : localInfo.youtubeUrl
+                    youtubeUrl: localInfo.youtubeUrl,
+                    address: {stringAddress: localInfo.stringAddress, splitedAddress: localInfo.splitedAddress}
                 }));
             };
             saveData();
@@ -166,8 +192,23 @@ const RoadModal = ( {roadPath}) => {
             handleShow();
         }, [localInfo]);
 
-    useEffect(() =>{
+    useEffect(() => {
         updateRoadInfo(roadPath);
+        const getAddress = async () => {
+            try {
+                const result = await client.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=
+                ${roadPath[0].lat},${roadPath[0].lng}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`);
+                console.dir(result.data.results[0].formatted_address);
+                let arr = result.data.results[0].formatted_address.split(" ");
+                console.dir(arr);
+                //console.dir(result.data);
+                updateStringAddress(result.data.results[0].formatted_address);
+                updateFormattedAddress(arr);
+            } catch (e) {
+                console.dir(e)
+            }
+        };
+        getAddress();
     }, []);
 
     useEffect(() => {
@@ -206,6 +247,7 @@ const RoadModal = ( {roadPath}) => {
 
                         <Form.Group controlId="detailedPosition">
                             <Form.Label>세부 위치</Form.Label>
+                            <ListGroup.Item>{localInfo.stringAddress}</ListGroup.Item>
                             <Form.Control placeholder="ex) 팔달관 근처, 도서관 정문 앞" name="detailedDescription"
                                           as="textarea"
                                           onChange={updateDetailedDescription}/>

@@ -152,7 +152,8 @@ const InfoViewerContainer = () => {
             }
         };
 
-        if (isMarkerClicked && storeCommentList !== []) {
+        if (isMarkerClicked && storeCommentList.length !== 0) {
+            console.dir('실행됨');
             uploadComment();
             updateCommentWarning();
             dispatch(removeFetchedData());

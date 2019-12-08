@@ -1,5 +1,5 @@
 import React, {useCallback, useReducer, useState} from 'react';
-import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col} from "react-bootstrap";
+import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col, ListGroup} from "react-bootstrap";
 import {useSelector} from "react-redux";
 import client from "../../lib/api/client";
 import ImageUpload from "../common/ImageUpload";
@@ -54,6 +54,10 @@ const initialState = {
     primaryPositionType: "excercise",
     secondaryPositionType: "축구",
     username: null,
+    imageUrl: [],
+    youtubeUrl: null,
+    splitedAddress: [],
+    stringAddress: null,
 };
 
 const bundleReducer = (state, action) => {
@@ -94,13 +98,25 @@ const bundleReducer = (state, action) => {
         case 'setLoading' : {
             return {...state, loading: action.loading}
         }
+        case 'updateImageUrl' : {
+            return {...state, imageUrl: action.imageUrl}
+        }
+        case 'updateYoutubeUrl' : {
+            return {...state, youtubeUrl: action.youtubeUrl}
+        }
+        case 'updateSplitedAddress' : {
+            return {...state, splitedAddress: action.splitedAddress}
+        }
+        case 'updateStringAddress' : {
+            return {...state, stringAddress: action.stringAddress}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
     }
 };
 
-const UserBundleModal = ({roadList, placeList, buildingList}) => {
+const BundleModal = ({roadList, placeList, buildingList}) => {
     const [localInfo, setLocalInfo] = useReducer(bundleReducer, initialState);
     const [visibleAlert, setVisibleAlert] = useState(false);
     const [show, setShow] = useState(true);
@@ -125,6 +141,23 @@ const UserBundleModal = ({roadList, placeList, buildingList}) => {
     const setLoading = (value) => {
         setLocalInfo({type: 'setLoading', loading: value})
     };
+    const updateImageUrl = (imageUrl) => {
+        setLocalInfo({type: 'updateImageUrl', imageUrl : imageUrl});
+    };
+    const updateYoutubeUrl = (youtubeUrl) => {
+        setLocalInfo({type: 'updateYoutubeUrl', youtubeUrl: youtubeUrl})
+    };
+    const updateFormattedAddress = (arr) => {
+        setLocalInfo({type: 'updateSplitedAddress', splitedAddress: arr});
+    };
+    const updateStringAddress = (address) => {
+        setLocalInfo({type: 'updateStringAddress', stringAddress: address});
+    };
+
+    const getAddress = useCallback(() => {
+        if(placeList) {
+        }
+    }, [buildingList, placeList, roadList]);
 
     const handleShow = useCallback(() => {
         if (!show) setShow(true);
@@ -164,7 +197,12 @@ const UserBundleModal = ({roadList, placeList, buildingList}) => {
 
                     <Form.Group controlId="photo">
                         <Form.Label>사진</Form.Label>
-                        <ImageUpload/>
+                        <ImageUpload updateImageUrl={updateImageUrl}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="photo">
+                        <Form.Label>유투브 Url</Form.Label>
+                        <Form.Control placeholder="유투브 url" name="updateName" onChange={updateYoutubeUrl}/>
                     </Form.Group>
 
                     <Form>
@@ -181,6 +219,7 @@ const UserBundleModal = ({roadList, placeList, buildingList}) => {
 
                         <Form.Group controlId="detailedPosition">
                             <Form.Label>세부 위치</Form.Label>
+                            <ListGroup.Item> </ListGroup.Item>
                             <Form.Control placeholder="ex) 팔달관 근처, 도서관 정문 앞" name="detailedDescription"
                                           as="textarea"
                                           onChange={updateDetailedDescription}/>
@@ -221,4 +260,4 @@ const UserBundleModal = ({roadList, placeList, buildingList}) => {
     );
 };
 
-export default UserBundleModal;
+export default BundleModal;

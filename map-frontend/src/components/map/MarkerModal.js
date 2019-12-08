@@ -71,6 +71,8 @@ const initialState = {
     radius: 0,
     imageUrl: null,
     youtubeUrl: null,
+    splitedAddress: [],
+    stringAddress: null,
 };
 
 const infoReducer = (state, action) => {
@@ -116,6 +118,12 @@ const infoReducer = (state, action) => {
         case 'updateYoutubeUrl': {
             return {...state, youtubeUrl: action.youtubeUrl}
         }
+        case 'updateSplitedAddress' : {
+            return {...state, splitedAddress : action.splitedAddress}
+        }
+        case 'updateStringAddress' : {
+            return {...state, stringAddress: action.stringAddress}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
@@ -154,8 +162,13 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
         setLocalInfo({type: 'updateImageUrl', imageUrl: url});
     };
     const updateYoutubeUrl = (e) => {
-        console.dir(e.target.value);
         setLocalInfo({type: 'updateYoutubeUrl', youtubeUrl: e.target.value});
+    };
+    const updateFormattedAddress = (arr) => {
+        setLocalInfo({type: 'updateSplitedAddress', splitedAddress : arr});
+    };
+    const updateStringAddress = (address) => {
+        setLocalInfo({type: 'updateStringAddress', stringAddress : address});
     };
 
 
@@ -173,8 +186,23 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
         setRadius(radius);
     }, [radius]);
     useEffect(() => {
+        const getAddress = async () => {
+            try{
+
+                const result = await client.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=
+                ${position.lat},${position.lng}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`);
+                console.dir(result.data.results[0].formatted_address);
+                let arr = result.data.results[0].formatted_address.split(" ");
+                console.dir(arr);
+                //console.dir(result.data);
+                updateStringAddress(result.data.results[0].formatted_address);
+                updateFormattedAddress(arr);
+            }catch(e){console.dir(e)}
+        };
+        getAddress();
         updateGridPosition(position);
     }, [position]);
+
     useEffect(() => {
         console.dir(username);
     }, [username]);
@@ -198,7 +226,8 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
                     radius: localInfo.radius,
                     username: username,
                     imageUrl: localInfo.imageUrl,
-                    youtubeUrl : localInfo.youtubeUrl
+                    youtubeUrl : localInfo.youtubeUrl,
+                    address : {stringAddress : localInfo.stringAddress, splitedAddress: localInfo.splitedAddress}
                 }));
             };
             saveData();
@@ -242,11 +271,12 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
                         <ListGroup>
                             <ListGroup.Item>위도 : {position.lat}</ListGroup.Item>
                             <ListGroup.Item>경도 : {position.lng}</ListGroup.Item>
+                            <ListGroup.Item>{localInfo.stringAddress}</ListGroup.Item>
                         </ListGroup>
                     </Form.Group>
 
                     <Form.Group controlId="radius">
-                        <Form.Label>범위 {localInfo.radius} m</Form.Label>
+                        <Form.Label style={{paddingRight: 10}}>범위 {localInfo.radius} m</Form.Label>
                         <Button variant="outline-primary" onClick={radiusButtonClick}>범위 추가하기</Button>
                     </Form.Group>
 

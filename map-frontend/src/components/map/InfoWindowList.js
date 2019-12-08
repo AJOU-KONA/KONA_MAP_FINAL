@@ -331,7 +331,8 @@ const InfoWindowItem = ({info, zoom}) => {
     return (
         <>
             {localInfo.visibleMarkerMouseOver && !localInfo.visibleInfoWindow && <InfoWindow
-                position={adjustMouseOverPosition(info.position, zoom)}>
+                position={adjustMouseOverPosition(info.position, zoom)}
+                options={{disableAutoPan: true}}>
                 <CardComponent info={info}/>
             </InfoWindow>}
 

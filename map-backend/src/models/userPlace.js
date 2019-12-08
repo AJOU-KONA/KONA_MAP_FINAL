@@ -18,6 +18,7 @@ const UserPlaceSchema = new Schema({
     block: Number,
     recommend: { good: Number, bad : Number, username: [String] },
     youtubeVideoId: String,
+    address : { stringAddress : String, splitedAddress : [String] }
 });
 
 UserPlaceSchema.statics.findByUsername = function(username){

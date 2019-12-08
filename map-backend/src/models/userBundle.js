@@ -14,7 +14,7 @@ const UserBundleSchema = new Schema({
     commentList: [],
     placeList: [],
     roadList: [],
-    buildingList: []
+    buildingList: [],
 });
 
 const UserBundle = mongoose.model('userBundle', UserBundleSchema);
