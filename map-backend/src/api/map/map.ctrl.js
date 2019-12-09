@@ -54,6 +54,34 @@ exports.listUserRoads = async ctx => {
     }
 };
 
+export const findUserBuildingByUserName = async ctx => {
+    const {username} = ctx.params;
+    try{
+        const userBuilding = await UserBuilding.find({username : username}).exec();
+        if(!userBuilding) {
+            ctx.status = 404;
+            return;
+        }
+        ctx.body = userBuilding;
+    }catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const findUserBundleByUserName = async ctx => {
+    const {username} = ctx.params;
+    try{
+        const userBundle = await UserBundle.find({username : username}).exec();
+        if(!userBundle) {
+            ctx.status = 404;
+            return;
+        }
+        ctx.body = userBundle;
+    }catch(e){
+        ctx.throw(500, e);
+    }
+};
+
 exports.findUserRoadByUserName = async ctx => {
     const {username} = ctx.params;
     try {
@@ -471,6 +499,24 @@ export const updateUserEstimate = async ctx => {
         ctx.body = result2;
     } catch (e) {
         ctx.throw(500, e);
+    }
+};
+
+export const removeInfo = async ctx => {
+    const {id, type } = ctx.request.body;
+    console.dir(id);
+    console.dir(type);
+
+    let result = null;
+    switch (type) {
+        case 'place' : result = await UserPlace.findOneAndDelete({_id: id}).exec(); break;
+        case 'building' : result = await UserBuilding.findOneAndDelete({_id: id}).exec(); break;
+        case 'road' : result = await UserRoad.findOneAndDelete({_id: id}).exec(); break;
+        case 'bundle' : result = await UserBundle.findOneAndDelete({_id: id}).exec(); break;
+    }
+    if(!result){
+        ctx.status = 404;
+        return;
     }
 };
 

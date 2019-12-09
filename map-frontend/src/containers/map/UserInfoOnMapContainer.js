@@ -35,7 +35,7 @@ const UserInfoOnMapContainer = ({zoom}) => {
                     const response = await client.get('/api/map/userBuilding');
                     setBuildingInfo(response.data);
                 } else {
-                    const response = await client.get('api/map/userBundle');
+                    const response = await client.get('/api/map/userBundle');
                     setBundleInfo(response.data);
                 }
             } catch (e) {

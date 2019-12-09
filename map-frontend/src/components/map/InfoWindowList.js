@@ -169,7 +169,7 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
                     setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null ));
             }
         }
-    }, [searchQuery, searchQueryType, searchQueryOption]);
+    }, [searchQuery, searchQueryType, searchQueryOption, bundleInfo, placeInfo, roadInfo, buildingInfo]);
 
     useEffect(() => {
         console.dir(filteredData);
@@ -193,9 +193,12 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
                 <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}}
             {searchQueryType === 'road' && zoom > 13 && <RoadViewContainer roadList={filteredData}/>}
             {searchQueryType === 'building' && zoom > 13 && <BuildingViewContainer buildingList={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <RoadViewContainer roadList={bundleItem.roadList}/>)}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <InfoWindowItem zoom={zoom} info={bundleItem.placeList}/>)}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <BuildingViewContainer buildingList={bundleItem.buildingList}/>)}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+                <RoadViewContainer roadList={bundleItem.roadList}/>)}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+                 bundleItem.placeList.map(place => <InfoWindowItem zoom={zoom} info={place}/>))}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+                <BuildingViewContainer buildingList={bundleItem.buildingList}/>)}
         </>
     );
 };
@@ -270,9 +273,9 @@ const InfoWindowItem = ({info, zoom}) => {
     }));
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        console.dir(isMarkerClicked);
-    }, [isMarkerClicked]);
+    useEffect(()=> {
+        console.dir(info);
+    }, [info]);
 
     const toggleMarKerMouseOver = useCallback(() => {
         setLocalInfo({type: 'toggleMouseOverWindow'})

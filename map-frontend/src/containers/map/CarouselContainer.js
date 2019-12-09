@@ -119,7 +119,7 @@ const CarouselContainer = ({info, type}) => {
                             />
                         </Carousel.Item>
                     )) : null}
-                    {info.floorArray && info.floorArray[localInfo.floor].imageUrl.map(
+                    {info.floorArray && info.imageUrl && info.floorArray[localInfo.floor].imageUrl.map(
                         url => url ? (
                             <Carousel.Item key={url}>
                                 <img

@@ -25,6 +25,10 @@ map.get('/userBuilding/:id', mapCtrl.findUserBuilding);
 
 map.get('/userRoad/username/:username', mapCtrl.findUserRoadByUserName);
 
+map.get('/userBuilding/username/:username', mapCtrl.findUserBuildingByUserName);
+
+map.get('/userBundle/username/:username', mapCtrl.findUserBundleByUserName);
+
 map.post('/', mapCtrl.makeUserPlace);
 
 map.post('/userRoad', mapCtrl.makeUserRoad);
@@ -32,6 +36,8 @@ map.post('/userRoad', mapCtrl.makeUserRoad);
 map.post('/userBuilding', mapCtrl.makeUserBuilding);
 
 map.post('/userBundle', checkLoggedIn, mapCtrl.makeUserBundle);
+
+map.patch('/removeInfo', checkLoggedIn, mapCtrl.removeInfo);
 
 map.patch('/userRoad/comment/:id', checkLoggedIn, mapCtrl.updateUserRoadComment);
 
