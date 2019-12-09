@@ -13,6 +13,7 @@ const selectOptions = {
     'travelRoad': ['홀로 여행', '도보여행', '테마여행', '자전거여행', '반려견과 함께 여행'],
     'foodRoad': ['한식', '양식', '중식', '혼합', '기타'],
     'sightSeeingRoad': ['문화', '건축물', '음악'],
+    'etc' : ['없음'],
 };
 
 const SecondarySelect = ({primarySelect}) => {
@@ -32,6 +33,9 @@ const SecondarySelect = ({primarySelect}) => {
             break;
         case 'sightSeeingRoad' :
             secondOption = selectOptions.sightSeeingRoad;
+            break;
+        case 'etc' :
+            secondOption = selectOptions.etc;
             break;
         default :
             secondOption = selectOptions.mainRoad;
@@ -255,6 +259,7 @@ const BundleModal = ({roadList, placeList, buildingList}) => {
                                         <option value="travelRoad">여행로</option>
                                         <option value="foodRoad">음식 추천로</option>
                                         <option value="sightSeeingRoad">관광</option>
+                                        <option value="etc">기타</option>
                                     </Form.Control>
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="SecondPositionType">

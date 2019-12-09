@@ -16,7 +16,8 @@ const selectOptions = {
     restPlace: ["호텔", "사우나", "고시원", "모텔"],
     hospital: ["내과", "정형외과", "치과", "안과", "피부과", "성형외과", "이비인후과", "가정의학과"],
     convenience: ["사진관", "부동산", "통신사", "성인용품매점"],
-    hairshop: ["피부미용실", "헤어미용실", "네일아트"]
+    hairshop: ["피부미용실", "헤어미용실", "네일아트"],
+    etc : ["없음"]
 };
 
 const SecondarySelect = ({primarySelect}) => {
@@ -49,6 +50,8 @@ const SecondarySelect = ({primarySelect}) => {
         case "hairshop" :
             secondOption = selectOptions.hairshop;
             break;
+        case "etc":
+            secondOption = selectOptions.etc; break;
         default :
             secondOption = selectOptions.excercise;
     }
@@ -305,6 +308,7 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
                                     <option value="hospital">병원</option>
                                     <option value="convenience">편의시설</option>
                                     <option value="hairshop">미용시설</option>
+                                    <option value="etc">기타</option>
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group as={Col} controlId="SecondPositionType">

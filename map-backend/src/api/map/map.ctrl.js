@@ -372,19 +372,26 @@ exports.listUserBundle = async ctx => {
     }
 };
 
-export const updateUserPlaceRecommend = async ctx => {
+export const updateUserRecommend = async ctx => {
     const {id} = ctx.params;
-    const {good, bad, username} = ctx.request.body;
+    const {good, bad, username, type} = ctx.request.body;
 
     try {
-        const result = await UserPlace.find({_id: id}).exec();
+        let result = null;
+        switch (type) {
+            case 'place': result = await UserPlace.findOne({_id: id}).exec(); break;
+            case 'road' : result = await UserRoad.findOne({_id: id}).exec(); break;
+            case 'building' : result = await UserBuilding.findOne({_id: id}).exec(); break;
+            case 'bundle' : result = await UserBundle.findOne({_id: id}).exec(); break;
+        }
+
         if (!result) {
             ctx.status = 404;
             return;
         }
 
         let inUserNameList = false;
-        result[0]._doc.recommend.username.forEach(function (element) {
+        result._doc.recommend.username.forEach(function (element) {
             if (element === username)
                 inUserNameList = true;
         });
@@ -394,27 +401,40 @@ export const updateUserPlaceRecommend = async ctx => {
             return;
         }
 
-        console.dir(result);
         const nextData = {
-            ...result[0]._doc, recommend: {
-                good: good ? result[0]._doc.recommend.good + 1 : result[0]._doc.recommend.good,
-                bad: bad ? result[0]._doc.recommend.bad + 1 : result[0]._doc.recommend.bad,
-                username: result[0]._doc.recommend.username.concat(username)
+            ...result._doc, recommend: {
+                good: good ? result._doc.recommend.good + 1 : result._doc.recommend.good,
+                bad: bad ? result._doc.recommend.bad + 1 : result._doc.recommend.bad,
+                username: result._doc.recommend.username.concat(username)
             }
         };
-        const result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true});
+
+        let result2 = null;
+        switch(type){
+            case 'place': result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'road': result2 = await UserRoad.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'building': result2 = await UserBuilding.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'bundle': result2 = await UserBundle.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+        }
         ctx.body = result2;
     } catch (e) {
         ctx.throw(500, e);
     }
 };
 
-export const updateUserPlaceEstimate = async ctx => {
+export const updateUserEstimate = async ctx => {
     const {id} = ctx.params;
-    const {good, interest, accuracy, username} = ctx.request.body;
+    const {good, interest, accuracy, username, type} = ctx.request.body;
 
     try {
-        const result = await UserPlace.findOne({_id: id}).exec();
+        let result = null;
+        switch(type){
+            case 'place': result = await UserPlace.findOne({_id: id}).exec(); break;
+            case 'road' : result = await UserRoad.findOne({_id: id}).exec(); break;
+            case 'building' : result = await UserBuilding.findOne({_id: id}).exec(); break;
+            case 'bundle': result = UserBundle.findOne({_id: id}).exec(); break;
+        }
+
         if (!result) {
             ctx.status = 404;
             return;
@@ -431,20 +451,28 @@ export const updateUserPlaceEstimate = async ctx => {
             return;
         }
 
-        const nextData = {
+        let nextData = {
             ...result._doc, estimate: {
-                good: good ? result._doc.estimate.good + 1 : result._doc.estimate.good,
-                interest: interest ? result._doc.estimate.interest + 1 : result._doc.estimate.interest,
-                accuracy: accuracy ? result._doc.estimate.accuracy + 1 : result._doc.estimate.accuracy,
+                good: good  + result._doc.estimate.good,
+                interest: result._doc.estimate.interest + interest,
+                accuracy: result._doc.estimate.accuracy + accuracy,
                 username: result._doc.estimate.username.concat(username)
             }
         };
-        const result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true});
+        let sum = nextData.estimate.good + nextData.estimate.accuracy + nextData.estimate.interest;
+        nextData.estimate.total = sum;
+        let result2 = null;
+        switch (type) {
+            case 'place' : result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'road': result2 = await UserRoad.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'building' : result2 = await UserBuilding.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+            case 'bundle' : result2 = await UserBundle.findOneAndUpdate({_id: id}, nextData, {new: true}); break;
+        }
         ctx.body = result2;
     } catch (e) {
         ctx.throw(500, e);
     }
-}
+};
 
 export const updateUserCommentWarning = async ctx => {
     const {id} = ctx.params;

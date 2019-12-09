@@ -39,9 +39,9 @@ map.patch('/userPlace/comment/:id', checkLoggedIn, mapCtrl.updateUserPlaceCommen
 
 map.patch('/userBuilding/comment/:id', checkLoggedIn, mapCtrl.updateUserBuildingComment);
 
-map.patch('/userPlace/recommend/:id', checkLoggedIn, mapCtrl.updateUserPlaceRecommend);
+map.patch('/userPlace/recommend/:id', checkLoggedIn, mapCtrl.updateUserRecommend);
 
-map.patch('/userPlace/estimate/:id', checkLoggedIn, mapCtrl.updateUserPlaceEstimate);
+map.patch('/estimate/:id', checkLoggedIn, mapCtrl.updateUserEstimate);
 
 map.patch('/userPlace/deleteComment', checkLoggedIn, mapCtrl.deleteComment);
 
