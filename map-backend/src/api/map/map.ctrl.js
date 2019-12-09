@@ -17,7 +17,8 @@ exports.makeUserPlace = async ctx => {
     const userPlace = new UserPlace({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, radius, imageUrl, block: 0,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address
+        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address,
+        estimate : {good: 0, interest: 0, accuracy : 0, username: []}
     });
     try {
         await userPlace.save();
@@ -108,7 +109,8 @@ exports.makeUserRoad = async ctx => {
     const userRoad = new UserRoad({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, roadInfo, imageUrl, block: 0,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address
+        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, address,
+        estimate : {good: 0, interest: 0, accuracy : 0, username: []}
     });
     try {
         await userRoad.save();
@@ -269,21 +271,26 @@ export const deleteComment = async ctx => {
 };
 
 export const makeUserBuilding = async ctx => {
-    const {
-        username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, imageUrl, youtubeUrl, buildingPosition,
-        roughMapUrl, address
+    let {
+        tags, primaryPositionType, secondaryPositionType, username, buildingPosition,
+        floor, floorArray, address
     } = ctx.request.body;
-    let index = youtubeUrl ? youtubeUrl.indexOf('v=') : null;
-    let youtubeVideoId = index ? youtubeUrl.substring(index + 2, youtubeUrl.length) : null;
-    const userRoad = new UserBuilding({
-        username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, imageUrl, block: 0, buildingPosition,
-        recommend: {good: 0, bad: 0, username: []}, youtubeVideoId, roughMapUrl, address
+
+
+    floorArray.forEach(function(element){
+        let index = element.youtubeUrl ? element.youtubeUrl.indexOf('v=') : null;
+        element.youtubeVideoId = index ? element.youtubeUrl.substring(index + 2, element.youtubeUrl.length) : null;
     });
+
+    const userBuilding = new UserBuilding({
+        tags, primaryPositionType, secondaryPositionType, username, buildingPosition,
+        floor, floorArray, address, block: 0, recommend: {good: 0, bad: 0, username: []},
+        estimate : {good: 0, interest: 0, accuracy : 0, username: []}
+    });
+
     try {
-        await userRoad.save();
-        ctx.body = userRoad;
+        await userBuilding.save();
+        ctx.body = userBuilding;
     } catch (e) {
         ctx.throw(500, e);
     }
@@ -300,7 +307,8 @@ export const makeUserBundle = async ctx => {
     const userBundle = new UserBundle({
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, roadList, placeList, buildingList, youtubeVideoId,
-        address, recommend: {good: 0, bad: 0, username: []}
+        address, recommend: {good: 0, bad: 0, username: []},
+        estimate : {good: 0, interest: 0, accuracy : 0, username: []}
     });
     try {
         await userBundle.save();
@@ -400,6 +408,43 @@ export const updateUserPlaceRecommend = async ctx => {
         ctx.throw(500, e);
     }
 };
+
+export const updateUserPlaceEstimate = async ctx => {
+    const {id} = ctx.params;
+    const {good, interest, accuracy, username} = ctx.request.body;
+
+    try {
+        const result = await UserPlace.findOne({_id: id}).exec();
+        if (!result) {
+            ctx.status = 404;
+            return;
+        }
+
+        let inUserNameList = false;
+        result._doc.estimate.username.forEach(function (element) {
+            if (element === username)
+                inUserNameList = true;
+        });
+
+        if (inUserNameList) {
+            ctx.status = 400;
+            return;
+        }
+
+        const nextData = {
+            ...result._doc, estimate: {
+                good: good ? result._doc.estimate.good + 1 : result._doc.estimate.good,
+                interest: interest ? result._doc.estimate.interest + 1 : result._doc.estimate.interest,
+                accuracy: accuracy ? result._doc.estimate.accuracy + 1 : result._doc.estimate.accuracy,
+                username: result._doc.estimate.username.concat(username)
+            }
+        };
+        const result2 = await UserPlace.findOneAndUpdate({_id: id}, nextData, {new: true});
+        ctx.body = result2;
+    } catch (e) {
+        ctx.throw(500, e);
+    }
+}
 
 export const updateUserCommentWarning = async ctx => {
     const {id} = ctx.params;

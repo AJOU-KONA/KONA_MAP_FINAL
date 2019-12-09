@@ -64,13 +64,15 @@ const BuildingViewListItem = ({building}) => {
     const [localInfo, setLocalInfo] = useReducer(buildingReducer, initialState);
     const [loading, setLoading] = useState(false);
 
-    const {username, buildingList, placeList, roadList, isAddBookMark, isMarkerClicked} = useSelector(({user, map}) => ({
+    const {username, buildingList, placeList, roadList, isAddBookMark, isMarkerClicked, floor} =
+        useSelector(({user, map}) => ({
         isMarkerClicked: map.isMarkerClicked,
         isAddBookMark: map.isAddBookMark,
         username: user.user.username,
         buildingList: map.bookMark.buildingList,
         placeList: map.bookMark.placeList,
         roadList: map.bookMark.roadList,
+        floor: map.floor
     }));
     const dispatch = useDispatch();
 
@@ -118,6 +120,10 @@ const BuildingViewListItem = ({building}) => {
         console.dir(building);
     }, []);
 
+    useEffect(() => {
+        console.dir(floor);
+    }, [floor]);
+
     return (
         <>
             {localInfo.visibleOnMouseOver && !localInfo.visibleInfoWindow &&
@@ -133,7 +139,7 @@ const BuildingViewListItem = ({building}) => {
                     <Row>
                         <Col>
                             <div style={{width: 600, height: 600}}>
-                                <CarouselContainer info={building}/>
+                                <CarouselContainer info={building} type="building"/>
                             </div>
                         </Col>
                         <Col>
@@ -168,14 +174,14 @@ const BuildingViewListItem = ({building}) => {
                                             <Form.Label column sm="4" style={{textAlign: "center"}}>
                                                 이름
                                             </Form.Label>
-                                            <ListGroup.Item>{building.name}</ListGroup.Item>
+                                            <ListGroup.Item>{building.floorArray[Number(floor)].name}</ListGroup.Item>
                                         </Form.Group>
                                         <Row>
                                             <Form.Label column sm="4" style={{textAlign: "center"}}>
                                                 설명
                                             </Form.Label>
                                             <Col>
-                                                <ListGroup.Item>{building.description}</ListGroup.Item>
+                                                <ListGroup.Item>{building.floorArray[Number(floor)].description}</ListGroup.Item>
                                             </Col>
                                         </Row>
                                         <Form.Group as={Row} style={{textAlign: "center"}}>
@@ -203,7 +209,8 @@ const BuildingViewListItem = ({building}) => {
                     </Row>
                 </div>
             </InfoWindow>}
-            {building.buildingPosition.map((pos, index) => <Rectangle bounds={pos} key={index}onMouseOver={onMouseOver}
+            {building.buildingPosition.map((pos, index) => <Rectangle bounds={pos} key={index}
+                                                                      onMouseOver={onMouseOver}
                                                                   onMouseOut={onMouseOver} onClick={onBuildingClick}/>)}
         </>
     )

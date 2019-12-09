@@ -12,11 +12,11 @@ const TagList = React.memo(({tags, onRemove}) => (
     </Row>
 ));
 
-const MapTagBox = ({updateTags} ) => {
+const MapTagBox = ({updateTags}) => {
     const [input, setInput] = useState('');
     const [localTags, setLocalTags] = useState([]);
 
-    useEffect(( ) =>{
+    useEffect(() => {
         updateTags(localTags);
     }, [localTags]);
 
@@ -57,7 +57,7 @@ const MapTagBox = ({updateTags} ) => {
 
     return (
         <>
-            <Row >
+            <Row>
                 <Col xs={6}>
                     <InputGroup className="mb-3">
                         <FormControl placeholder="태그를 입력해주세요(검색에 활용됩니다)" value={input} onChange={onChange}

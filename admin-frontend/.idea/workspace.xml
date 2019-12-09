@@ -2,18 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b55483f0-f3b4-4970-8d54-adbd54dcfa86" name="Default Changelist" comment="Iteration5 add admin page &amp;&amp; set layout, sideBar, Header">
+      <change afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BuildingModalBody.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/common/ImageUpload.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/common/ImageUpload.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/BuildingModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BuildingModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/BundleModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BundleModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/MarkerModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/MarkerModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/RoadModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/RoadModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/BuildingViewContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/BuildingViewContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/ClusterMarkerContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/ClusterMarkerContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/MapTagBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/MapTagBox.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

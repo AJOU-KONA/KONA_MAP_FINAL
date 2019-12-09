@@ -41,6 +41,8 @@ map.patch('/userBuilding/comment/:id', checkLoggedIn, mapCtrl.updateUserBuilding
 
 map.patch('/userPlace/recommend/:id', checkLoggedIn, mapCtrl.updateUserPlaceRecommend);
 
+map.patch('/userPlace/estimate/:id', checkLoggedIn, mapCtrl.updateUserPlaceEstimate);
+
 map.patch('/userPlace/deleteComment', checkLoggedIn, mapCtrl.deleteComment);
 
 map.patch('/warningComment/:id', checkLoggedIn, mapCtrl.updateUserCommentWarning);

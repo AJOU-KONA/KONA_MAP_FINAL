@@ -1,6 +1,6 @@
 import React from 'react';
 import ImageUploader from 'react-images-upload';
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Row} from "react-bootstrap";
 import client from "../../lib/api/client";
 
 class ImageUpload extends React.Component {
@@ -12,11 +12,12 @@ class ImageUpload extends React.Component {
         this.handleFileInput = this.handleFileInput.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        //console.dir(this.props);
+    }
+
     onDrop(e) {
-        console.dir(e.target.files);
         this.setState({
-            //pictures: this.state.pictures.concat(e.target.files),
-            //pictures: this.state.pictures.concat(e.target.files)
             pictures: e.target.files
         });
     }
@@ -49,45 +50,26 @@ class ImageUpload extends React.Component {
                     console.dir(result);
                 }
             };
-            await upload().then( res => {
+            await upload().then(res => {
                 alert('업로드 성공');
                 this.props.updateImageUrl(imageUrl);
-            }  ).catch(err=> alert('업로드 실패'));
+            }).catch(err => alert('업로드 실패'));
         };
-
         uploadImage();
-
-        /*
-        return client.post("/api/upload", formData).then(res => {
-            console.dir(res);
-            this.props.updateImageUrl(res.data.url);
-            alert(`${res.data.key} 업로드 성공`);
-        }).catch(err => {
-            alert('이미지 파일 업로드 실패');
-        });
-        */
     };
 
     render() {
         return (
             <>
-                {/*
-                <ImageUploader
-                    withIcon={true}
-                    buttonText='이미지 선택'
-                    onChange={this.onDrop}
-                    label=""
-                    withPreview={true}
-                    imgExtension={['.jpg', '.gif', '.png', '.gif', 'jpeg']}
-                    maxFileSize={5242880}
-                />
-                <Button variant="outline-info" onClick={this.onClick}>이미지 등록</Button>
-                */}
-
-                <input type="file" name="file" multiple onChange={this.onDrop}/>
-                <Button type="button" onClick={this.onClick}>업로드</Button>
-
-
+                <Row>
+                    <div style={{paddingLeft: 20}}/>
+                    <input type="file" name="file" multiple onChange={this.onDrop}/>
+                    <Button type="button" onClick={this.onClick}>업로드 실행</Button>
+                    <div style={{paddingLeft: 10}}/>
+                    {this.props.isUploaded ?
+                        <Button variant="outline-success">업로드 완료</Button> :
+                        <Button variant="outline-danger">업로드 안됨</Button>}
+                </Row>
             </>
         );
     }

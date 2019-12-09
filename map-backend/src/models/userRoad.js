@@ -16,6 +16,7 @@ const UserRoadSchema = new Schema({
     imageUrl: [String],
     block: Number,
     recommend: { good: Number, bad : Number, username : [String] },
+    estimate : { good: Number, interest: Number, accuracy: Number, total : Number, username : [String] },
     youtubeVideoId: String,
     address : { stringAddress : String, splitedAddress : [String] }
 });

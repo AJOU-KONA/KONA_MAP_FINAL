@@ -226,7 +226,7 @@ const RoadModal = ({roadPath}) => {
 
                     <Form.Group controlId="photo">
                         <Form.Label>사진</Form.Label>
-                        <ImageUpload updateImageUrl={updateImageUrl}/>
+                        <ImageUpload updateImageUrl={updateImageUrl} isUploaded={localInfo.imageUrl}/>
                     </Form.Group>
 
                     <Form>

@@ -139,19 +139,19 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
         } else if (searchQueryType === 'building') { // 건물 검색
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(buildingInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 ? inf : null));
                     break;
                 case "tag":
-                    setFilteredData(buildingInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].tags.indexOf(searchQuery)) !== -1 ? inf : null));
                     break;
                 case "description":
-                    setFilteredData(buildingInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].description.indexOf(searchQuery)) !== -1 ? inf : null));
                     break;
                 case "position":
-                    setFilteredData(buildingInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
                     break;
                 default:
-                    setFilteredData(buildingInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 ? inf : null));
             }
         } else {
             // bundle 검색시
@@ -299,39 +299,7 @@ const InfoWindowItem = ({info, zoom}) => {
         }
     }, [isAddBookMark]);
 
-
-    {/*
-    useEffect(() => {
-        console.dir(storeCommentList);
-        const uploadComment = async () => {
-            try {
-                if(searchQueryType === 'place' )
-                    await client.patch(`/api/map/userPlace/comment/${localInfo.filteredData._id}`, {
-                        commentList : localInfo.commentList
-                    });
-                if(searchQueryType === 'road' )
-                    await client.patch(`/api/map/userRoad/comment/${localInfo.filteredData._id}`, {
-                        commentList : localInfo.commentList
-                    });
-                if(searchQueryType === 'building' )
-                    await client.patch(`/api/map/userBuilding/comment/${localInfo.filteredData._id}`, {
-                        commentList : localInfo.commentList
-                    });
-            } catch (e) {
-                console.dir(e);
-            }
-        };
-
-        if(!isMarkerClicked && storeCommentList !== []){
-            //uploadComment();
-            dispatch(setCommentList([]));
-        }
-    }, [isMarkerClicked, storeCommentList, searchQueryType]);
-    */
-    }
-
     if (!info) return null;
-
 
     return (
         <>

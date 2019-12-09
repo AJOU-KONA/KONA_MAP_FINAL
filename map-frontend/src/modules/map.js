@@ -9,6 +9,7 @@ const SET_SEARCH_QUERY = 'map/SET_SEARCH_QUERY';
 const SET_CURRENT_USER_LOCATION = 'map/SET_CURRENT_USER_LOCATION';
 const SET_COMMENT_LIST  = 'map/SET_COMMENT_LIST';
 const SET_COMMENT = 'map/SET_COMMENT';
+const SET_FLOOR = 'map/SET_FLOOR';
 const REMOVE_FETCHED_DATA = 'map/REMOVE_FETCHED_DATA';
 const SET_ADD_INFO_ON_MAP = 'map/SET_ADD_INFO_ON_MAP';
 const SET_ADD_ROAD_ON_MAP = 'map/SET_ADD_ROAD_ON_MAP';
@@ -35,6 +36,7 @@ export const setSearchQuery = createAction(SET_SEARCH_QUERY,
     ({searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption}) => ({
     searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption
 }));
+export const setFloorRedux = createAction(SET_FLOOR, floor=>floor);
 export const removeFetchedData = createAction(REMOVE_FETCHED_DATA);
 export const clearMap = createAction(CLEAR_MAP, isclearMap => isclearMap);
 export const updateBookMark = createAction(UPDATE_BOOK_MARK, ({buildingList, roadList, placeList}) =>
@@ -106,6 +108,7 @@ const initialState = {
         placeList : [],
     },
     error: null,
+    floor: 0,
 };
 
 const map = handleActions(
@@ -213,8 +216,11 @@ const map = handleActions(
         [FETCH_BUILDING_INFO_FAILURE] : (state, {payload: error}) => ({
             ...state,
             error: error
-        })
-
+        }),
+        [SET_FLOOR] : (state, {payload: floor}) => ({
+            ...state,
+            floor: floor,
+        }),
     },
     initialState,
 );

@@ -14,13 +14,14 @@ const BuildingSchema = new Schema({
     secondaryPositionType: String,
     radius: Number,
     commentList: [],
-    imageUrl : [String],
-    roughMapUrl: [String],
     block: Number,
     recommend: { good: Number, bad : Number, username: [String] },
+    // 유용함, 흥미로움, 신뢰도, 종합
+    estimate : { good: Number, interest: Number, accuracy: Number, total : Number, username : [String] },
     youtubeVideoId: String,
     buildingPosition: [],
     floor : Number,
+    floorArray: [],
     address : { stringAddress : String, splitedAddress : [String] }
 });
 
