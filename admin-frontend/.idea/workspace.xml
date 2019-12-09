@@ -2,22 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b55483f0-f3b4-4970-8d54-adbd54dcfa86" name="Default Changelist" comment="Iteration5 add admin page &amp;&amp; set layout, sideBar, Header">
-      <change afterPath="$PROJECT_DIR$/../map-frontend/src/GeoJSON/sig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../map-frontend/src/GeoJSON/sig2.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/building.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/building.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/userPlace.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userPlace.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/userRoad.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userRoad.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/BuildingModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BuildingModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/BundleModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BundleModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/MarkerModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/MarkerModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/RoadModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/RoadModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/UserBundleModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/BundleModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/BookMarkContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/BookMarkContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/CarouselContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/CarouselContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/CommentContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/CommentContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/MapContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/MapContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/BuildingViewContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/BuildingViewContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/ClusterMarkerContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/ClusterMarkerContainer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,7 +39,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../map-frontend" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -97,6 +93,7 @@
       <workItem from="1575539302206" duration="3305000" />
       <workItem from="1575605497790" duration="598000" />
       <workItem from="1575767711910" duration="648000" />
+      <workItem from="1575797003017" duration="1863000" />
     </task>
     <task id="LOCAL-00001" summary="Iteration5 add admin page &amp;&amp; set layout, sideBar, Header">
       <created>1574928198031</created>

@@ -89,7 +89,7 @@ const VerticalLine = styled.div`
   top: 0;
 `;
 
-const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
+const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) => {
     const {searchQuery, searchQueryType, searchQueryOption} = useSelector(({map}) => ({
         searchQueryType: map.searchQuery.searchQueryType,
         searchQuery: map.searchQuery.searchQuery,
@@ -98,6 +98,8 @@ const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
     const [filteredData, setFilteredData] = useState(null);
     const [filteredBundleRoad, setFilteredBundleRoad] = useState(null);
     const [filteredBundlePlace, setFilteredBundlePlace] = useState(null);
+    const [filteredBundleBuilding, setFilteredBundleBuilding] = useState(null);
+    const [filteredBundleData, setFilteredBundleData] = useState(null);
 
     useEffect(() => {
         if (searchQueryType === 'place') {
@@ -134,7 +136,7 @@ const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
                 default:
                     setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
             }
-        } else if ( searchQueryType === 'building' ){ // 건물 검색
+        } else if (searchQueryType === 'building') { // 건물 검색
             switch (searchQueryOption) {
                 case "name":
                     setFilteredData(buildingInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
@@ -152,26 +154,19 @@ const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
                     setFilteredData(buildingInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
             }
         } else {
+            // bundle 검색시
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredBundlePlace(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
-                    setFilteredBundleRoad(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null ));
                     break;
                 case "tag":
-                    setFilteredBundlePlace(placeInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null));
-                    setFilteredBundleRoad(roadInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null ));
                     break;
                 case "description":
-                    setFilteredBundlePlace(placeInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null));
-                    setFilteredBundleRoad(roadInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null));
-                    break;
-                case "position":
-                    setFilteredBundlePlace(placeInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
-                    setFilteredBundleRoad(roadInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null ));
                     break;
                 default:
-                    setFilteredBundlePlace(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
-                    setFilteredBundleRoad(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null ));
             }
         }
     }, [searchQuery, searchQueryType, searchQueryOption]);
@@ -180,19 +175,27 @@ const InfoWindowList = ({placeInfo, roadInfo, buildingInfo, zoom}) => {
         console.dir(filteredData);
     }, [filteredData]);
 
+    useEffect(() => {
+        console.dir(filteredBundleData);
+    },[filteredBundleData]);
+
     if (searchQueryType !== 'bundle' && !filteredData) return null;
-    if (searchQueryType === 'bundle' && (!filteredBundlePlace || !filteredBundleRoad)) return null;
+    if (searchQueryType === 'bundle' && !filteredBundleData) return null;
 
     return (
         <>
-            {searchQueryType === 'place' && <ClusterMarkerContainer zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'place' && filteredData.map((inf) => (
+            {searchQueryType === 'place' && zoom <= 13 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'road' && zoom <= 13 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'building' && zoom <= 13 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom <= 13 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
+
+            {searchQueryType === 'place' && zoom > 13 &&  filteredData.map((inf) => (
                 <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}}
-            {searchQueryType === 'road' && <RoadViewContainer roadList={filteredData}/>}
-            {searchQueryType === 'building' && <BuildingViewContainer buildingList={filteredData}/>}
-            {searchQueryType === 'bundle' && <RoadViewContainer roadList={filteredBundleRoad}/>}
-            {searchQueryType === 'bundle' && filteredBundlePlace.map((inf) => (
-                <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}
+            {searchQueryType === 'road' && zoom > 13 && <RoadViewContainer roadList={filteredData}/>}
+            {searchQueryType === 'building' && zoom > 13 && <BuildingViewContainer buildingList={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <RoadViewContainer roadList={bundleItem.roadList}/>)}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <InfoWindowItem zoom={zoom} info={bundleItem.placeList}/>)}
+            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem => <BuildingViewContainer buildingList={bundleItem.buildingList}/>)}
         </>
     );
 };
@@ -252,8 +255,10 @@ const initialState = {
 
 const InfoWindowItem = ({info, zoom}) => {
     const [localInfo, setLocalInfo] = useReducer(InfoWindowReducer, initialState);
-    const {username, isAddBookMark, buildingList, roadList, placeList, isMarkerClicked,
-    storeCommentList, searchQueryType } = useSelector(({user, map}) => ({
+    const {
+        username, isAddBookMark, buildingList, roadList, placeList, isMarkerClicked,
+        storeCommentList, searchQueryType
+    } = useSelector(({user, map}) => ({
         username: user.user.username,
         isAddBookMark: map.isAddBookMark,
         buildingList: map.bookMark.buildingList,
@@ -274,11 +279,10 @@ const InfoWindowItem = ({info, zoom}) => {
     }, [localInfo]);
     const toggleInfoWindow = useCallback(() => {
         console.dir(isMarkerClicked);
-        if(!isMarkerClicked) {
+        if (!isMarkerClicked) {
             dispatch(fetchPlaceInfo(info._id));
             dispatch(setInfoViewer(true));
-        }
-        else dispatch(setInfoViewer(false));
+        } else dispatch(setInfoViewer(false));
         //setLocalInfo({type: 'toggleInfoWindow'})
     }, [localInfo, isMarkerClicked]);
 
@@ -323,7 +327,8 @@ const InfoWindowItem = ({info, zoom}) => {
             dispatch(setCommentList([]));
         }
     }, [isMarkerClicked, storeCommentList, searchQueryType]);
-    */}
+    */
+    }
 
     if (!info) return null;
 

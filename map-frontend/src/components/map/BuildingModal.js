@@ -220,6 +220,7 @@ const BuildingModal = ({buildingList, closeModal}) => {
             saveData();
             setVisibleAlert(true);
             handleShow();
+            window.location.reload();
         }, [localInfo, handleShow]);
 
     useEffect(() => {

@@ -235,6 +235,7 @@ const MarkerModal = ({onLeftClick, position, radius, circle, setCircle, setAlert
             reset();
             handleShow();
             setCircle(false);
+            window.location.reload();
         }, [localInfo]
     );
 

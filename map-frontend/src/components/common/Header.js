@@ -50,6 +50,12 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                 }));
         }, [dispatch, optionValue, option, type]);
 
+    const onKeyPress = useCallback((e) => {
+        if(e.key === 'Enter') {
+            onSubmit(e);
+        }
+    }, [optionValue, option, type]);
+
     return (
         <StyledHeader>
             <Navbar bg="dark" variant="dark">
@@ -58,7 +64,7 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                     {user && <Nav.Link onClick={onLogout}>로그아웃</Nav.Link>}
                     {!user && <Nav.Link href="/login">로그인</Nav.Link>}
                 </Nav>
-                <Form inline onKeyPress={onSubmit}>
+                <Form inline onKeyPress={onKeyPress}>
                     <Form.Group style={{paddingRight: 10}}>
                         <Button onClick={setAddInfo}><FiMapPin/></Button>
                         <div style={{paddingRight: 10}}/>
@@ -67,7 +73,7 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                         <Button onClick={setAddBuilding}><FaRegBuilding/></Button>
                     </Form.Group>
                     <Form.Group>
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2"
+                        <Form.Control placeholder="Search" className="mr-sm-2"
                         value={optionValue} onChange={onChangeSearchQuery}/>
                         <Form.Control as="select" value={type} onChange={onChangeSearchQueryType}>
                             <option value="place">위치 검색</option>

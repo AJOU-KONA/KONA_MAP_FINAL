@@ -121,7 +121,8 @@ const BuildingViewListItem = ({building}) => {
     return (
         <>
             {localInfo.visibleOnMouseOver && !localInfo.visibleInfoWindow &&
-            <InfoWindow position={{lat: building.buildingPosition[0].north, lng: building.buildingPosition[0].east}}>
+            <InfoWindow position={{lat: building.buildingPosition[0].north, lng: building.buildingPosition[0].east}}
+                options={{disableAutoPan : true}}>
                 <CardComponent info={building}/>
             </InfoWindow>}
             {localInfo.visibleInfoWindow && <InfoWindow position={

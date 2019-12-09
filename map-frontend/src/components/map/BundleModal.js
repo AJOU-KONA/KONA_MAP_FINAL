@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {Modal, ModalBody, ModalTitle, ModalFooter, Button, Form, Row, Col, ListGroup} from "react-bootstrap";
 import {useSelector} from "react-redux";
 import client from "../../lib/api/client";
@@ -142,33 +142,42 @@ const BundleModal = ({roadList, placeList, buildingList}) => {
         setLocalInfo({type: 'setLoading', loading: value})
     };
     const updateImageUrl = (imageUrl) => {
-        setLocalInfo({type: 'updateImageUrl', imageUrl : imageUrl});
+        setLocalInfo({type: 'updateImageUrl', imageUrl: imageUrl});
     };
     const updateYoutubeUrl = (youtubeUrl) => {
         setLocalInfo({type: 'updateYoutubeUrl', youtubeUrl: youtubeUrl})
     };
-    const updateFormattedAddress = (arr) => {
+    const updateSplitedAddress = (arr) => {
         setLocalInfo({type: 'updateSplitedAddress', splitedAddress: arr});
     };
     const updateStringAddress = (address) => {
         setLocalInfo({type: 'updateStringAddress', stringAddress: address});
     };
 
-    const getAddress = useCallback(() => {
-        if(placeList) {
-        }
-    }, [buildingList, placeList, roadList]);
-
     const handleShow = useCallback(() => {
         if (!show) setShow(true);
         else setShow(false);
     }, [show]);
 
+
+    useEffect(() => {
+        if (placeList.length !== 0) {
+            updateSplitedAddress(placeList[0].address.splitedAddress);
+            updateStringAddress(placeList[0].address.stringAddress);
+        } else if (roadList.length !== 0) {
+            updateSplitedAddress(roadList[0].address.splitedAddress);
+            updateStringAddress(roadList[0].address.stringAddress);
+        } else {
+            updateSplitedAddress(buildingList[0].address.splitedAddress);
+            updateStringAddress(buildingList[0].address.stringAddress);
+        }
+    }, [placeList, buildingList, roadList]);
+
     const onSubmit = useCallback(
         e => {
             e.preventDefault();
             const saveData = async () => {
-                setLoading(true);
+
                 await client.post('/api/map/userBundle', ({
                     name: localInfo.name,
                     description: localInfo.description,
@@ -176,17 +185,26 @@ const BundleModal = ({roadList, placeList, buildingList}) => {
                     detailedPosition: localInfo.detailedPosition,
                     primaryPositionType: localInfo.primaryPositionType,
                     secondaryPositionType: localInfo.secondaryPositionType,
-                    username: localInfo.username,
+                    username: username,
                     buildingList: buildingList,
                     roadList: roadList,
-                    placeList: placeList
+                    placeList: placeList,
+                    address: {
+                        stringAddress: localInfo.stringAddress,
+                        splitedAddress: localInfo.splitedAddress
+                    }
                 }));
-                setLoading(false);
             };
             saveData();
             setVisibleAlert(true);
             handleShow();
+            window.location.reload();
         }, [localInfo]);
+
+    useEffect(() => {
+        console.dir('처리됨');
+        console.dir(localInfo.stringAddress);
+    }, [localInfo.stringAddress]);
 
     return (
         <>
@@ -219,7 +237,7 @@ const BundleModal = ({roadList, placeList, buildingList}) => {
 
                         <Form.Group controlId="detailedPosition">
                             <Form.Label>세부 위치</Form.Label>
-                            <ListGroup.Item> </ListGroup.Item>
+                            <ListGroup.Item>{localInfo.stringAddress}</ListGroup.Item>
                             <Form.Control placeholder="ex) 팔달관 근처, 도서관 정문 앞" name="detailedDescription"
                                           as="textarea"
                                           onChange={updateDetailedDescription}/>

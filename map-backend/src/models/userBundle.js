@@ -15,6 +15,8 @@ const UserBundleSchema = new Schema({
     placeList: [],
     roadList: [],
     buildingList: [],
+    address : { stringAddress : String, splitedAddress : [String] },
+    recommend: {good: Number, bad: Number, username: [String]}
 });
 
 const UserBundle = mongoose.model('userBundle', UserBundleSchema);

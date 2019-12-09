@@ -292,15 +292,15 @@ export const makeUserBuilding = async ctx => {
 export const makeUserBundle = async ctx => {
     const {
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeUrl,
+        primaryPositionType, secondaryPositionType, roadList, placeList, buildingList, youtubeUrl,
         address
     } = ctx.request.body;
-    let index = youtubeUrl.indexOf('v=');
-    let youtubeVideoId = youtubeUrl.substring(index + 2, youtubeUrl.length);
+    let index = youtubeUrl ? youtubeUrl.indexOf('v=') : null;
+    let youtubeVideoId = index ? youtubeUrl.substring(index + 2, youtubeUrl.length) : null;
     const userBundle = new UserBundle({
         username, name, description, tags, position, detailedPosition, publishingDate,
-        primaryPositionType, secondaryPositionType, roadList, placeList, buildingPosition, youtubeVideoId,
-        address
+        primaryPositionType, secondaryPositionType, roadList, placeList, buildingList, youtubeVideoId,
+        address, recommend: {good: 0, bad: 0, username: []}
     });
     try {
         await userBundle.save();

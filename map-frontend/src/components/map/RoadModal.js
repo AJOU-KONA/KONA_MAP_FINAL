@@ -190,6 +190,7 @@ const RoadModal = ({roadPath}) => {
             saveData();
             setVisibleAlert(true);
             handleShow();
+            window.location.reload();
         }, [localInfo]);
 
     useEffect(() => {
