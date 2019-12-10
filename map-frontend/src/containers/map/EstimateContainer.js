@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {IoIosThumbsUp, IoIosThumbsDown} from 'react-icons/io';
 import {AiFillAlert} from 'react-icons/ai';
-import {Button, Form, Row, Col} from "react-bootstrap";
+import {Button, Form, Row, Col, ProgressBar, FormLabel} from "react-bootstrap";
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {addWarning} from "../../modules/auth";
@@ -35,6 +35,7 @@ const initialState = {
     accuracy:  0,
     interest: 0,
     good: 0,
+    userEstimate: null,
 };
 
 const EstimateReducer = (state, action) => {
@@ -54,19 +55,53 @@ const EstimateReducer = (state, action) => {
         case 'good': {
             return {...state, good: action.good}
         }
+        case 'getUserEstimate' : {
+            return {...state, userEstimate: action.userEstimate}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
     }
 };
 
+const getPlcaeType = (info) => {
+    if(info.floorArray) return "building";
+    else if ( info.roadInfo ) return "road";
+    else if ( info.position) return "place";
+    else return "bundle";
+}
+
 const EstimateContainer = ({info}) => {
     const [localInfo, setLocalInfo] = useReducer(EstimateReducer, initialState);
+
     const {username} = useSelector(({user}) => ({
         username: user.user.username
     }));
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            let result = null;
+            const type = getPlcaeType(info);
+            try{
+                switch(type){
+                    case 'place' : result = await client.get(`/api/map/userPlace/Estimate/${info._id}`); break;
+                    case 'road' : result = await client.get(`/api/map/userRoad/Estimate/${info._id}`); break;
+                    case 'building' : result = await client.get(`/api/map/userBuilding/Estimate/${info._id}`);break;
+                    case 'bundle' : result = await client.get(`/api/map/userBundle/Estimate/${info._id}`); break;
+                }
+                setLocalInfo({type: 'getUserEstimate', userEstimate : result.data});
+            }catch(e){
+                console.dir(e);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        console.dir(localInfo.userEstimate);
+    }, [localInfo.userEstimate]);
 
     const onWarningClick = useCallback(() => {
         if (info.username === username) {
@@ -146,15 +181,55 @@ const EstimateContainer = ({info}) => {
         }
     }, [localInfo.warning]);
 
-    useEffect(() => {
-        console.dir(localInfo.accuracy);
-        console.dir(localInfo.interest);
-        console.dir(localInfo.good);
-    }, [localInfo.accuracy, localInfo.interest, localInfo.good]);
+    if(!localInfo.userEstimate) return null;
 
     return (
         <div style={{paddingTop: 10}}>
-            <Form >
+            <div style={{paddingBottom : 10, paddingTop: 10}} >
+                <Col>
+                    <Row>
+                        <Col>
+                            <FormLabel>신뢰도</FormLabel>
+                        </Col>
+                        <Col>
+                            <ProgressBar variant="success" now={Number(localInfo.userEstimate.formatted_accuracy) * 20}
+                                         label={`${localInfo.userEstimate.formatted_accuracy}`}/>
+                        </Col>
+                    </Row>
+                    <div style={{paddingBottom : 10}}/>
+                    <Row>
+                        <Col>
+                            <FormLabel>유용도</FormLabel>
+                        </Col>
+                        <Col>
+                            <ProgressBar variant="info" now={Number(localInfo.userEstimate.formatted_interest) * 20}
+                                         label={`${localInfo.userEstimate.formatted_interest}`}/>
+                        </Col>
+                    </Row>
+                    <div style={{paddingBottom : 10}}/>
+                    <Row>
+                        <Col>
+                            <FormLabel>만족도</FormLabel>
+                        </Col>
+                        <Col>
+                            <ProgressBar variant="warning" now={Number(localInfo.userEstimate.formatted_good) * 20}
+                                         label={`${localInfo.userEstimate.formatted_good}`}/>
+                        </Col>
+                    </Row>
+                    <div style={{paddingBottom : 10}}/>
+                    <Row>
+                        <Col>
+                            <FormLabel>종합</FormLabel>
+                        </Col>
+                        <Col>
+                            <ProgressBar variant="danger" now={Number(localInfo.userEstimate.formatted_total) * 20}
+                                         label={`${localInfo.userEstimate.formatted_total}`}/>
+                        </Col>
+                    </Row>
+                </Col>
+            </div>
+            <hr/>
+            <Form>
                 <CustomForm label="신뢰도" onchange={e =>{
                     let type = "accuracy";
                     onChange(e, type);}}/>

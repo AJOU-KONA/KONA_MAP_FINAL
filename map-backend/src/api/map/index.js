@@ -29,6 +29,14 @@ map.get('/userBuilding/username/:username', mapCtrl.findUserBuildingByUserName);
 
 map.get('/userBundle/username/:username', mapCtrl.findUserBundleByUserName);
 
+map.get('/userPlace/Estimate/:id', mapCtrl.getUserPlaceEstimate);
+
+map.get('/userRoad/Estimate/:id', mapCtrl.getUserRoadEstimate);
+
+map.get('/userBuilding/Estimate/:id', mapCtrl.getUserBuildingEstimate);
+
+map.get('/userBundle/Estimate/:id', mapCtrl.getUserBundleEstimate);
+
 map.post('/', mapCtrl.makeUserPlace);
 
 map.post('/userRoad', mapCtrl.makeUserRoad);

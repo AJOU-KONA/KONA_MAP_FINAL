@@ -21,7 +21,7 @@ import InfoViewerContainer from "./InfoViewerContainer";
 import BuildingRemarkContainer from "./BuildingRemarkContainer";
 import BuildingModal from "../../components/map/BuildingModal";
 import sig2 from '../../GeoJSON/sig2.json';
-import {fetchBuildingInfo, removeFetchedData} from "../../modules/map";
+import {fetchBuildingInfo, removeFetchedData, setZoom} from "../../modules/map";
 
 const StyledMapContainerWrapper = styled.div`
     position: fixed;
@@ -142,7 +142,7 @@ const MapContainer = () => {
         const dispatch = useDispatch();
         const {
             username, searchQueryOnMap, currentUserLocation, isAddInfo, isAddRoad, roadType,
-            searchQueryType, isClearMap, isAddBookMark, isMarkerClicked, isAddBuilding
+            searchQueryType, isClearMap, isAddBookMark, isMarkerClicked, isAddBuilding, reduxZoom
         } = useSelector(({map, user}) => ({
             searchQueryOnMap: map.searchQuery.searchQueryOnMap,
             searchQueryType: map.searchQuery.searchQueryType,
@@ -154,7 +154,8 @@ const MapContainer = () => {
             isClearMap: map.isClearMap,
             isAddBookMark: map.isAddBookMark,
             isMarkerClicked: map.isMarkerClicked,
-            isAddBuilding: map.isAddBuilding
+            isAddBuilding: map.isAddBuilding,
+            reduxZoom: map.zoom
         }));
 
         const [localInfo, setLocalInfo] = useReducer(infoReducer, initialState);

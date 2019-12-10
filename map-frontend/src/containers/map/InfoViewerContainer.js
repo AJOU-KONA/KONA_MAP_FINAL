@@ -167,20 +167,25 @@ const InfoViewerContainer = () => {
         if (!isAddBookMark) {
             dispatch(addBookMark(true));
         }
+        let updatePlace, updateRoad, updateBuilding;
         switch (searchQueryType) {
             case 'place':
-                let updatePlace = placeList.concat(placeInfo);
-                dispatch(updateBookMark({buildingList: buildingList, roadList: roadList, placeList: updatePlace}));
+                if (!placeList.includes(placeInfo)) {
+                    updatePlace = placeList.concat(placeInfo);
+                    dispatch(updateBookMark({buildingList: buildingList, roadList: roadList, placeList: updatePlace}));
+                }
                 break;
             case 'road':
-                let updateRoad = roadList.concat(roadInfo);
-                console.dir(updateRoad);
-                dispatch(updateBookMark({buildingList: buildingList, roadList: updateRoad, placeList: placeList}));
+                if (!roadList.includes(roadInfo)) {
+                    updateRoad = roadList.concat(roadInfo);
+                    dispatch(updateBookMark({buildingList: buildingList, roadList: updateRoad, placeList: placeList}));
+                }
                 break;
             case 'building':
-                let updateBuilding = buildingList.concat(buildingInfo);
-                console.dir(updateBuilding);
-                dispatch(updateBookMark({buildingList: updateBuilding, roadList: roadList, placeList: placeList}));
+                if (!placeList.includes(buildingInfo)) {
+                    updateBuilding = buildingList.concat(buildingInfo);
+                    dispatch(updateBookMark({buildingList: updateBuilding, roadList: roadList, placeList: placeList}));
+                }
                 break;
         }
     }, [isAddBookMark, placeList, roadList, buildingList, searchQueryType, placeInfo, roadInfo, buildingInfo]);

@@ -28,37 +28,56 @@ const getPrimaryPosition = (position) => {
 };
 
 const BasicInfoViewerContainer = ({info}) => {
-    return(
+    return (
         <Form>
+            <div style={{paddingTop: 10}}/>
             <Form.Group as={Row}>
-                <Form.Label column  sm="4" style={{textAlign: "center"}}>
+                <Form.Label column sm="2" style={{textAlign: "center"}}>
                     이름
                 </Form.Label>
-                <ListGroup.Item>{info.name}</ListGroup.Item>
+                <ListGroup.Item>{info.floorArray ? info.floorArray[0].name : info.name}</ListGroup.Item>
             </Form.Group>
             <Form.Group as={Row}>
-                <Form.Label column sm="4" style={{textAlign: "center"}}>
+                <Form.Label column sm="2" style={{textAlign: "center"}}>
                     설명
                 </Form.Label>
-                <ListGroup.Item>{info.description}</ListGroup.Item>
+                <ListGroup.Item>{info.floorArray ? info.floorArray[0].description : info.description}</ListGroup.Item>
             </Form.Group>
             <Form.Group as={Row} style={{textAlign: "center"}}>
-                <Form.Label column  sm="4">
+                <Form.Label column sm="2">
+                    주소
+                </Form.Label>
+                <ListGroup horizontal>
+                    <ListGroup.Item>{info.address.stringAddress}</ListGroup.Item>
+                </ListGroup>
+            </Form.Group>
+            {/*
+            <Form.Group as={Row} style={{textAlign: "center"}}>
+                <Form.Label column sm="2">
                     위치 타입
                 </Form.Label>
                 <ListGroup.Item>{getPrimaryPosition(info.primaryPositionType)}</ListGroup.Item>
                 <ListGroup.Item>{info.secondaryPositionType}</ListGroup.Item>
             </Form.Group>
+            */}
             <Form.Group as={Row} style={{textAlign: "center"}}>
-                <Form.Label column sm="4">
+                <Form.Label column sm="2">
                     태그
                 </Form.Label>
-                {info.tags.map((tag, index) => (
-                    <ListGroupItem key={index}>#{tag}</ListGroupItem>))}
+                <ListGroup horizontal>
+                    {info.tags.map((tag, index) => (
+                        <ListGroupItem key={index}>#{tag}</ListGroupItem>))}
+                </ListGroup>
             </Form.Group>
             {info.radius &&
-            <h3>{info.radius === undefined ? "반경 없음" : `반경 ${info.radius} m`}</h3>}
-            <p>등록일 : {info.publishingDate}</p>
+            <Form.Group as={Row} style={{textAlign: "center"}}>
+                <Form.Label column sm="2">
+                    반경
+                </Form.Label>
+                <ListGroup.Item>{info.radius} m</ListGroup.Item>
+            </Form.Group>
+            }
+
         </Form>
     );
 };

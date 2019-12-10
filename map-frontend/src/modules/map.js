@@ -10,6 +10,8 @@ const SET_CURRENT_USER_LOCATION = 'map/SET_CURRENT_USER_LOCATION';
 const SET_COMMENT_LIST  = 'map/SET_COMMENT_LIST';
 const SET_COMMENT = 'map/SET_COMMENT';
 const SET_FLOOR = 'map/SET_FLOOR';
+const SET_ZOOM = 'map/SET_ZOOM';
+const SET_CENTER  = 'map/SET_CENTER';
 const REMOVE_FETCHED_DATA = 'map/REMOVE_FETCHED_DATA';
 const SET_ADD_INFO_ON_MAP = 'map/SET_ADD_INFO_ON_MAP';
 const SET_ADD_ROAD_ON_MAP = 'map/SET_ADD_ROAD_ON_MAP';
@@ -36,6 +38,8 @@ export const setSearchQuery = createAction(SET_SEARCH_QUERY,
     ({searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption}) => ({
     searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption
 }));
+export const setCenter = createAction(SET_CENTER, center => center);
+export const setZoom = createAction(SET_ZOOM, zoom => zoom);
 export const setFloorRedux = createAction(SET_FLOOR, floor=>floor);
 export const removeFetchedData = createAction(REMOVE_FETCHED_DATA);
 export const clearMap = createAction(CLEAR_MAP, isclearMap => isclearMap);
@@ -109,6 +113,8 @@ const initialState = {
     },
     error: null,
     floor: 0,
+    center : 0,
+    zoom : false,
 };
 
 const map = handleActions(
@@ -221,6 +227,14 @@ const map = handleActions(
             ...state,
             floor: floor,
         }),
+        [SET_CENTER]: (state, {payload: center}) => ({
+            ...state,
+            center: center
+        }),
+        [SET_ZOOM] : (state, {payload: zoom}) => ({
+            ...state,
+            zoom: zoom
+        })
     },
     initialState,
 );

@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {MarkerClusterer, Marker} from "@react-google-maps/api";
+import {useDispatch} from "react-redux";
+import {setZoom, setCenter} from "../../modules/map";
 
 const initialPosition = {lat: 37.284315, lng: 127.044504};
 
@@ -15,35 +17,33 @@ const getPosition = (bundle) => {
 };
 
 const ClusterMarkerContainer = ({type, zoom, info}) => {
-
-    useEffect(() => {
-        console.dir(info);
-    }, [info]);
-
     if (!info) return null;
 
     return (
         <>
-            {zoom <= 13 && type === 'place' &&
-            <MarkerClusterer minimumClusterSize={1} averageCenter={true}>
+            {type === 'place' &&
+            <MarkerClusterer minimumClusterSize={1} averageCenter={true} zoomOnClick={false}>
                 {(clus) => info.map(place => <Marker visible={false} key={place._id} position={place.position}
                                                      clusterer={clus}/>)}
             </MarkerClusterer>}
-            {zoom <= 13 && type === 'road' &&
-            <MarkerClusterer minimumClusterSize={1} averageCenter={true}>
+            {type === 'road' &&
+            <MarkerClusterer minimumClusterSize={1} averageCenter={true} zoomOnClick={false}>
                 {clus => info.map(road => <Marker visible={false} key={road._id} position={road.roadInfo[0]}
                                                   clusterer={clus}/>)}
             </MarkerClusterer>}
 
-            {zoom <= 13 && type === 'building' &&
-            <MarkerClusterer minimumClusterSize={1} averageCenter={true}>
+            {type === 'building' &&
+            <MarkerClusterer minimumClusterSize={1} averageCenter={true} zoomOnClick={false}>
                 {clus => info.map(building => <Marker visible={false} key={building._id}
-                                                      position={building.buildingPosition[0]}
+                                                      position={{
+                                                          lat: building.buildingPosition[0].north,
+                                                          lng: building.buildingPosition[0].east,
+                                                      }}
                                                       clusterer={clus}/>)}
             </MarkerClusterer>}
 
-            {zoom <= 13 && type === 'bundle' &&
-            <MarkerClusterer minimumClusterSize={1} averageCenter={true}>
+            {type === 'bundle' &&
+            <MarkerClusterer minimumClusterSize={1} averageCenter={true} zoomOnClick={false}>
                 {clus => info.map(bundle => <Marker visible={false} key={bundle._id}
                                                     position={getPosition(info)}
                                                     clusterer={clus}/>)}

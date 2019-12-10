@@ -502,6 +502,104 @@ export const updateUserEstimate = async ctx => {
     }
 };
 
+export const getUserPlaceEstimate = async ctx => {
+    const {id} = ctx.params;
+
+    try{
+        const result = await UserPlace.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let formatted_total, formatted_accuracy, formatted_interest, formatted_good;
+        formatted_accuracy = formatted_good = formatted_interest = formatted_total = 0;
+
+        formatted_interest = result._doc.estimate.interest  / (result._doc.estimate.username.length ) ;
+        formatted_accuracy = result._doc.estimate.accuracy  / (result._doc.estimate.username.length  ) ;
+        formatted_good = result._doc.estimate.good  / (result._doc.estimate.username.length  ) ;
+        formatted_total = result._doc.estimate.total  / (result._doc.estimate.username.length  * 3 ) ;
+        let data = {formatted_accuracy, formatted_interest, formatted_total, formatted_good};
+        ctx.body = data;
+    } catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserRoadEstimate = async ctx => {
+    const {id} = ctx.params;
+
+    try{
+        const result = await UserRoad.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let formatted_total, formatted_accuracy, formatted_interest, formatted_good;
+        formatted_accuracy = formatted_good = formatted_interest = formatted_total = 0;
+
+        formatted_interest = result._doc.estimate.interest  / (result._doc.estimate.username.length ) ;
+        formatted_accuracy = result._doc.estimate.accuracy  / (result._doc.estimate.username.length  ) ;
+        formatted_good = result._doc.estimate.good  / (result._doc.estimate.username.length  ) ;
+        formatted_total = result._doc.estimate.total  / (result._doc.estimate.username.length  * 3 ) ;
+        let data = {formatted_accuracy, formatted_interest, formatted_total, formatted_good};
+        ctx.body = data;
+    } catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserBuildingEstimate = async ctx => {
+    const {id} = ctx.params;
+
+    try{
+        const result = await UserBuilding.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let formatted_total, formatted_accuracy, formatted_interest, formatted_good;
+        formatted_accuracy = formatted_good = formatted_interest = formatted_total = 0;
+
+        formatted_interest = result._doc.estimate.interest  / (result._doc.estimate.username.length ) ;
+        formatted_accuracy = result._doc.estimate.accuracy  / (result._doc.estimate.username.length  ) ;
+        formatted_good = result._doc.estimate.good  / (result._doc.estimate.username.length  ) ;
+        formatted_total = result._doc.estimate.total  / (result._doc.estimate.username.length  * 3 ) ;
+        let data = {formatted_accuracy, formatted_interest, formatted_total, formatted_good};
+        ctx.body = data;
+    } catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserBundleEstimate = async ctx => {
+    const {id} = ctx.params;
+
+    try{
+        const result = await UserBundle.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let formatted_total, formatted_accuracy, formatted_interest, formatted_good;
+        formatted_accuracy = formatted_good = formatted_interest = formatted_total = 0;
+
+        formatted_interest = result._doc.estimate.interest  / (result._doc.estimate.username.length ) ;
+        formatted_accuracy = result._doc.estimate.accuracy  / (result._doc.estimate.username.length  ) ;
+        formatted_good = result._doc.estimate.good  / (result._doc.estimate.username.length  ) ;
+        formatted_total = result._doc.estimate.total  / (result._doc.estimate.username.length  * 3 ) ;
+        let data = {formatted_accuracy, formatted_interest, formatted_total, formatted_good};
+        ctx.body = data;
+    } catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+
+
 export const removeInfo = async ctx => {
     const {id, type } = ctx.request.body;
     console.dir(id);

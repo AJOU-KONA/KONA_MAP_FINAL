@@ -34,7 +34,7 @@ const CommentListItem = ({comment, commentList, UpdateCommentList}) => {
     }));
 
     const onRemoveClick = useCallback(() => {
-        UpdateCommentList(commentList.filter(item => item._id !== comment._id));
+        UpdateCommentList(commentList.filter(item => item.body !== comment.body));
     }, [commentList]);
 
     const onWarningClick = useCallback(() => {

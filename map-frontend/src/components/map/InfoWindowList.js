@@ -184,20 +184,20 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
 
     return (
         <>
-            {searchQueryType === 'place' && zoom <= 13 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'road' && zoom <= 13 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'building' && zoom <= 13 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom <= 13 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
+            {searchQueryType === 'place' && zoom <= 17 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'road' && zoom <= 17 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'building' && zoom <= 17 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom <= 17 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
 
-            {searchQueryType === 'place' && zoom > 13 &&  filteredData.map((inf) => (
+            {searchQueryType === 'place' && zoom > 17 &&  filteredData.map((inf) => (
                 <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}}
-            {searchQueryType === 'road' && zoom > 13 && <RoadViewContainer roadList={filteredData}/>}
-            {searchQueryType === 'building' && zoom > 13 && <BuildingViewContainer buildingList={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'road' && zoom > 17 && <RoadViewContainer roadList={filteredData}/>}
+            {searchQueryType === 'building' && zoom > 17 && <BuildingViewContainer buildingList={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
                 <RoadViewContainer roadList={bundleItem.roadList}/>)}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
                  bundleItem.placeList.map(place => <InfoWindowItem zoom={zoom} info={place}/>))}
-            {searchQueryType === 'bundle' && zoom > 13 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
                 <BuildingViewContainer buildingList={bundleItem.buildingList}/>)}
         </>
     );
@@ -313,13 +313,12 @@ const InfoWindowItem = ({info, zoom}) => {
             </InfoWindow>}
 
             <Marker position={info.position} onClick={toggleInfoWindow}
-                    icon={zoom > 13 ? findIcon(info.primaryPositionType) : null}
-                    visible={zoom <= 13 ? false : true}
+                    icon={findIcon(info.primaryPositionType)}
                     onMouseOver={toggleMarKerMouseOver}
                     onMouseOut={toggleMarKerMouseOver}
             />
 
-            {info.radius !== undefined && localInfo.visibleInfoWindow &&
+            {info.radius !== undefined && isMarkerClicked &&
             <Circle center={info.position} radius={info.radius}/>}
 
         </>
