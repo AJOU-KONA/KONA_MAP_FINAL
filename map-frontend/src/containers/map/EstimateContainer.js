@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {IoIosThumbsUp, IoIosThumbsDown} from 'react-icons/io';
 import {AiFillAlert} from 'react-icons/ai';
-import {Button, Form, Row, Col, ProgressBar, FormLabel} from "react-bootstrap";
+import {Button, Form, Row, Col, ProgressBar, FormLabel, Badge} from "react-bootstrap";
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {addWarning} from "../../modules/auth";
@@ -14,7 +14,7 @@ const ButtonWrapper = styled.div`
 const CustomForm = ({label, onchange}) => {
 
     return (
-        <Form.Group style={{paddingLeft: 10}} >
+        <Form.Group style={{paddingLeft: 10}}>
             <Row>
                 <Col>
                     <Form.Label style={{paddingRight: 10}}>{label}</Form.Label>
@@ -32,10 +32,11 @@ const CustomForm = ({label, onchange}) => {
 
 const initialState = {
     warning: false,
-    accuracy:  0,
+    accuracy: 0,
     interest: 0,
     good: 0,
     userEstimate: null,
+    userRecommend: null,
 };
 
 const EstimateReducer = (state, action) => {
@@ -47,7 +48,7 @@ const EstimateReducer = (state, action) => {
             return {...state, warning: !state.warning};
         }
         case 'accuracy' : {
-            return {...state, accuracy: action.accuracy }
+            return {...state, accuracy: action.accuracy}
         }
         case 'interest' : {
             return {...state, interest: action.interest}
@@ -58,6 +59,9 @@ const EstimateReducer = (state, action) => {
         case 'getUserEstimate' : {
             return {...state, userEstimate: action.userEstimate}
         }
+        case 'getUserRecommend' : {
+            return {...state, userRecommend: action.userRecommend}
+        }
         default: {
             throw new Error(`unexpected action.type: ${action.type}`)
         }
@@ -65,9 +69,9 @@ const EstimateReducer = (state, action) => {
 };
 
 const getPlcaeType = (info) => {
-    if(info.floorArray) return "building";
-    else if ( info.roadInfo ) return "road";
-    else if ( info.position) return "place";
+    if (info.floorArray) return "building";
+    else if (info.roadInfo) return "road";
+    else if (info.position) return "place";
     else return "bundle";
 }
 
@@ -83,16 +87,30 @@ const EstimateContainer = ({info}) => {
     useEffect(() => {
         const fetchData = async () => {
             let result = null;
+            let result2 = null;
             const type = getPlcaeType(info);
-            try{
-                switch(type){
-                    case 'place' : result = await client.get(`/api/map/userPlace/Estimate/${info._id}`); break;
-                    case 'road' : result = await client.get(`/api/map/userRoad/Estimate/${info._id}`); break;
-                    case 'building' : result = await client.get(`/api/map/userBuilding/Estimate/${info._id}`);break;
-                    case 'bundle' : result = await client.get(`/api/map/userBundle/Estimate/${info._id}`); break;
+            try {
+                switch (type) {
+                    case 'place' :
+                        result = await client.get(`/api/map/userPlace/Estimate/${info._id}`);
+                        result2 = await client.get(`/api/map/userPlace/Recommend/${info._id}`);
+                        break;
+                    case 'road' :
+                        result = await client.get(`/api/map/userRoad/Estimate/${info._id}`);
+                        result2 = await client.get(`/api/map/userRoad/Recommend/${info._id}`);
+                        break;
+                    case 'building' :
+                        result = await client.get(`/api/map/userBuilding/Estimate/${info._id}`);
+                        result2 = await client.get(`/api/map/userBuilding/Recommend/${info._id}`);
+                        break;
+                    case 'bundle' :
+                        result = await client.get(`/api/map/userBundle/Estimate/${info._id}`);
+                        result2 = await client.get(`/api/map/userBundle/Recommend/${info._id}`);
+                        break;
                 }
-                setLocalInfo({type: 'getUserEstimate', userEstimate : result.data});
-            }catch(e){
+                setLocalInfo({type: 'getUserEstimate', userEstimate: result.data});
+                setLocalInfo({type: 'getUserRecommend', userRecommend: result2.data});
+            } catch (e) {
                 console.dir(e);
             }
         };
@@ -113,21 +131,21 @@ const EstimateContainer = ({info}) => {
 
     const onEstimateClick = useCallback(() => {
         const patchEstimate = async () => {
-            try{
+            try {
                 let type;
-                if(info.floor) type = 'building';
+                if (info.floor) type = 'building';
                 else if (info.roadInfo) type = 'road';
                 else if (info.position) type = 'place';
                 else type = 'bundle';
 
                 await client.patch(`/api/map/estimate/${info._id}`, {
-                   good: Number(localInfo.good),
-                   interest: Number(localInfo.interest),
-                   accuracy: Number(localInfo.accuracy),
+                    good: Number(localInfo.good),
+                    interest: Number(localInfo.interest),
+                    accuracy: Number(localInfo.accuracy),
                     username: username,
-                    type : type
+                    type: type
                 });
-            }catch(e){
+            } catch (e) {
                 console.dir(e);
                 alert('이미 평가하셨습니다');
             }
@@ -136,13 +154,35 @@ const EstimateContainer = ({info}) => {
     }, [localInfo]);
 
     const onGoodRecommendClick = useCallback(() => {
+        const type = getPlcaeType(info);
         const patchRecommend = async () => {
             try {
-                await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
-                    good: true,
-                    bad: false,
-                    username: username
-                });
+                switch(type) {
+                    case 'place' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                            good: true,
+                            bad: false,
+                            username: username,
+                            type: "place"
+                        });
+                    case 'building' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: true,
+                        bad: false,
+                        username: username,
+                        type: "building"
+                    });
+                    case 'road' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: true,
+                        bad: false,
+                        username: username,
+                        type: "road"
+                    });
+                    case 'bundle' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: true,
+                        bad: false,
+                        username: username,
+                        type: "bundle"
+                    });
+                }
             } catch (e) {
                 console.dir(e);
                 alert('이미 추천하셨습니다');
@@ -152,13 +192,35 @@ const EstimateContainer = ({info}) => {
     }, []);
 
     const onBadRecommendClick = useCallback(() => {
+        const type = getPlcaeType(info);
         const patchRecommend = async () => {
             try {
-                await client.patch(`/api/map//userPlace/recommend/${info._id}`, {
-                    good: false,
-                    bad: true,
-                    username: username
-                });
+                switch(type) {
+                    case 'place' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: false,
+                        bad: true,
+                        username: username,
+                        type: "place"
+                    });
+                    case 'building' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: false,
+                        bad: true,
+                        username: username,
+                        type: "building"
+                    });
+                    case 'road' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: false,
+                        bad: true,
+                        username: username,
+                        type: "road"
+                    });
+                    case 'bundle' : await client.patch(`/api/map/userPlace/recommend/${info._id}`, {
+                        good: false,
+                        bad: true,
+                        username: username,
+                        type: "bundle"
+                    });
+                }
             } catch (e) {
                 console.dir(e);
                 alert('이미 추천하셨습니다');
@@ -169,9 +231,15 @@ const EstimateContainer = ({info}) => {
 
     const onChange = (e, type) => {
         switch (type) {
-            case 'accuracy': setLocalInfo({type: 'accuracy', accuracy : e.target.value}); break;
-            case 'interest': setLocalInfo({type: 'interest', interest : e.target.value}); break;
-            case 'good' : setLocalInfo({type: 'good', good: e.target.value}); break;
+            case 'accuracy':
+                setLocalInfo({type: 'accuracy', accuracy: e.target.value});
+                break;
+            case 'interest':
+                setLocalInfo({type: 'interest', interest: e.target.value});
+                break;
+            case 'good' :
+                setLocalInfo({type: 'good', good: e.target.value});
+                break;
         }
     };
 
@@ -181,11 +249,12 @@ const EstimateContainer = ({info}) => {
         }
     }, [localInfo.warning]);
 
-    if(!localInfo.userEstimate) return null;
+    if (!localInfo.userEstimate) return null;
+    if (!localInfo.userRecommend) return null;
 
     return (
         <div style={{paddingTop: 10}}>
-            <div style={{paddingBottom : 10, paddingTop: 10}} >
+            <div style={{paddingBottom: 10, paddingTop: 10}}>
                 <Col>
                     <Row>
                         <Col>
@@ -196,7 +265,7 @@ const EstimateContainer = ({info}) => {
                                          label={`${localInfo.userEstimate.formatted_accuracy}`}/>
                         </Col>
                     </Row>
-                    <div style={{paddingBottom : 10}}/>
+                    <div style={{paddingBottom: 10}}/>
                     <Row>
                         <Col>
                             <FormLabel>유용도</FormLabel>
@@ -206,7 +275,7 @@ const EstimateContainer = ({info}) => {
                                          label={`${localInfo.userEstimate.formatted_interest}`}/>
                         </Col>
                     </Row>
-                    <div style={{paddingBottom : 10}}/>
+                    <div style={{paddingBottom: 10}}/>
                     <Row>
                         <Col>
                             <FormLabel>만족도</FormLabel>
@@ -216,7 +285,7 @@ const EstimateContainer = ({info}) => {
                                          label={`${localInfo.userEstimate.formatted_good}`}/>
                         </Col>
                     </Row>
-                    <div style={{paddingBottom : 10}}/>
+                    <div style={{paddingBottom: 10}}/>
                     <Row>
                         <Col>
                             <FormLabel>종합</FormLabel>
@@ -226,19 +295,28 @@ const EstimateContainer = ({info}) => {
                                          label={`${localInfo.userEstimate.formatted_total}`}/>
                         </Col>
                     </Row>
+                    <Row>
+                        <div style={{paddingLeft: 20}}/>
+                        <Button >좋아요<Badge variant="light">{localInfo.userRecommend.good}</Badge></Button>
+                        <div style={{paddingLeft: 10}}/>
+                        <Button variant="danger">싫어요<Badge variant="light">{localInfo.userRecommend.bad}</Badge></Button>
+                    </Row>
                 </Col>
             </div>
             <hr/>
             <Form>
-                <CustomForm label="신뢰도" onchange={e =>{
+                <CustomForm label="신뢰도" onchange={e => {
                     let type = "accuracy";
-                    onChange(e, type);}}/>
-                <CustomForm label="유용도" onchange={e =>{
+                    onChange(e, type);
+                }}/>
+                <CustomForm label="유용도" onchange={e => {
                     let type = "interest";
-                    onChange(e, type); }}/>
-                <CustomForm label="만족도" onchange={e =>{
+                    onChange(e, type);
+                }}/>
+                <CustomForm label="만족도" onchange={e => {
                     let type = "good";
-                    onChange(e, type); }}/>
+                    onChange(e, type);
+                }}/>
                 <Row style={{paddingLeft: 30}}>
                     <ButtonWrapper>
                         <Button onClick={onGoodRecommendClick}><IoIosThumbsUp/>좋아요</Button>

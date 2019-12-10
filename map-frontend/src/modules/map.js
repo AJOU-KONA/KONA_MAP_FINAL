@@ -183,11 +183,11 @@ const map = handleActions(
             ...state,
             bookMark: {
             buildingList: state.bookMark.buildingList === addedInfo.buildingList ?
-                state.bookMark.buildingList : state.bookMark.buildingList.concat(addedInfo.buildingList),
+                state.bookMark.buildingList : addedInfo.buildingList,
             placeList: state.bookMark.placeList === addedInfo.placeList ?
-                 state.bookMark.placeList : state.bookMark.placeList.concat(addedInfo.placeList),
+                 state.bookMark.placeList : addedInfo.placeList,
             roadList: state.bookMark.roadList === addedInfo.roadList ?
-                state.bookMark.roadList : state.bookMark.roadList.concat(addedInfo.roadList)}
+                state.bookMark.roadList : addedInfo.roadList}
         }),
         [START_ADD_BOOK_MARK] : (state, {payload : isStart}) => ({
             ...state,

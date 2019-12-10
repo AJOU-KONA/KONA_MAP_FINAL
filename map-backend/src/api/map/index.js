@@ -37,6 +37,11 @@ map.get('/userBuilding/Estimate/:id', mapCtrl.getUserBuildingEstimate);
 
 map.get('/userBundle/Estimate/:id', mapCtrl.getUserBundleEstimate);
 
+map.get('/userPlace/Recommend/:id', mapCtrl.getUserPlaceRecommend);
+map.get('/userRoad/Recommend/:id', mapCtrl.getUserRoadRecommend);
+map.get('/userBuilding/Recommend/:id', mapCtrl.getUserBuildingRecommend);
+map.get('/userBundle/Recommend/:id', mapCtrl.getUserBundleRecommend);
+
 map.post('/', mapCtrl.makeUserPlace);
 
 map.post('/userRoad', mapCtrl.makeUserRoad);

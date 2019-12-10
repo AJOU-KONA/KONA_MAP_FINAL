@@ -184,20 +184,20 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
 
     return (
         <>
-            {searchQueryType === 'place' && zoom <= 17 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'road' && zoom <= 17 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'building' && zoom <= 17 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom <= 17 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
+            {searchQueryType === 'place' && zoom <= 15 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'road' && zoom <= 15 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'building' && zoom <= 15 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom <= 15 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
 
-            {searchQueryType === 'place' && zoom > 17 &&  filteredData.map((inf) => (
+            {searchQueryType === 'place' && zoom > 16 &&  filteredData.map((inf) => (
                 <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}}
-            {searchQueryType === 'road' && zoom > 17 && <RoadViewContainer roadList={filteredData}/>}
-            {searchQueryType === 'building' && zoom > 17 && <BuildingViewContainer buildingList={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'road' && zoom > 16 && <RoadViewContainer roadList={filteredData}/>}
+            {searchQueryType === 'building' && zoom > 16 && <BuildingViewContainer buildingList={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom > 16 && filteredBundleData.map(bundleItem =>
                 <RoadViewContainer roadList={bundleItem.roadList}/>)}
-            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'bundle' && zoom > 16 && filteredBundleData.map(bundleItem =>
                  bundleItem.placeList.map(place => <InfoWindowItem zoom={zoom} info={place}/>))}
-            {searchQueryType === 'bundle' && zoom > 17 && filteredBundleData.map(bundleItem =>
+            {searchQueryType === 'bundle' && zoom > 16 && filteredBundleData.map(bundleItem =>
                 <BuildingViewContainer buildingList={bundleItem.buildingList}/>)}
         </>
     );

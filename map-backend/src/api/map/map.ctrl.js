@@ -404,6 +404,7 @@ export const updateUserRecommend = async ctx => {
     const {id} = ctx.params;
     const {good, bad, username, type} = ctx.request.body;
 
+    console.dir(type);
     try {
         let result = null;
         switch (type) {
@@ -570,6 +571,73 @@ export const getUserBuildingEstimate = async ctx => {
         let data = {formatted_accuracy, formatted_interest, formatted_total, formatted_good};
         ctx.body = data;
     } catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserPlaceRecommend = async ctx => {
+    const {id} = ctx.params;
+
+    console.dir(id);
+    try{
+        const result = await UserPlace.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let nextData = {good: result._doc.recommend.good, bad: result._doc.recommend.bad};
+        console.dir(nextData);
+        ctx.body = nextData;
+    }catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserRoadRecommend = async ctx => {
+    const {id} = ctx.params;
+    try{
+        const result = await UserRoad.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let nextData = {good: result._doc.recommend.good, bad: result._doc.recommend.bad};
+        ctx.body = nextData;
+    }catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserBuildingRecommend = async ctx => {
+    const {id} = ctx.params;
+    try{
+        const result = await UserBuilding.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let nextData = {good: result._doc.recommend.good, bad: result._doc.recommend.bad};
+        ctx.body = nextData;
+    }catch(e){
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserBundleRecommend = async ctx => {
+    const {id} = ctx.params;
+    try{
+        const result = await UserBundle.findOne({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+
+        let nextData = {good: result._doc.recommend.good, bad: result._doc.recommend.bad};
+        ctx.body = nextData;
+    }catch(e){
         ctx.throw(500, e);
     }
 };
