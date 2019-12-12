@@ -5,6 +5,7 @@ import {Navbar, Nav, Form, FormControl, Button} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {clearMap, setSearchQuery} from "../../modules/map";
 import {FiMapPin, FaRoad, FaRegBuilding} from "react-icons/all";
+import {firstLivingAreaKor, getLivingAreaEng} from "../../lib/korLocation";
 
 const StyledHeader = styled.div`
     padding-left: 60px;
@@ -14,12 +15,14 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
     const dispatch = useDispatch();
     const {searchQueryOnMap, isClearMap} = useSelector(({map}) => ({
         searchQueryOnMap: map.searchQuery.searchQueryOnMap,
-        isClearMap : map.isClearMap
+        isClearMap: map.isClearMap,
     }));
 
     const [optionValue, setOptionValue] = useState('');
     const [type, setType] = useState('place');
     const [option, setOption] = useState('name');
+    const [firstLivingArea, setFirstLivingArea] = useState("전체");
+    const [secondLivingArea, setSecondLivingArea]  = useState("전체");
 
     const onChangeSearchQuery = useCallback(
         e => {
@@ -47,14 +50,29 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                 searchQueryType: type,
                 searchQueryOnMap: true,
                 searchQueryOption: option,
-                }));
-        }, [dispatch, optionValue, option, type]);
+                searchQueryFirstLivingArea : firstLivingArea,
+                searchQuerySecondLivingArea : secondLivingArea,
+            }));
+        }, [dispatch, optionValue, option, type, firstLivingArea, secondLivingArea]);
 
     const onKeyPress = useCallback((e) => {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             onSubmit(e);
         }
     }, [optionValue, option, type]);
+
+    const onFirstLivingAreaChange = useCallback((e) => {
+        setFirstLivingArea(e.target.value);
+
+    }, []);
+
+    useEffect(() => {
+        setSecondLivingArea(getLivingAreaEng(firstLivingArea)[0]);
+    }, [firstLivingArea]);
+
+    const onSecondLivingAreaChange = useCallback((e) => {
+        setSecondLivingArea(e.target.value);
+    }, []);
 
     return (
         <StyledHeader>
@@ -73,8 +91,15 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                         <Button onClick={setAddBuilding}><FaRegBuilding/></Button>
                     </Form.Group>
                     <Form.Group>
+                        <Form.Control as="select" onChange={onFirstLivingAreaChange}>
+                            {firstLivingAreaKor.map(first => <option value={first}>{first}</option>)}
+                        </Form.Control>
+                        <Form.Control as="select" onChange={onSecondLivingAreaChange}>
+                            {getLivingAreaEng(firstLivingArea).map(second => <option value={second}>{second}</option>)}
+                        </Form.Control>
+
                         <Form.Control placeholder="Search" className="mr-sm-2"
-                        value={optionValue} onChange={onChangeSearchQuery}/>
+                                      value={optionValue} onChange={onChangeSearchQuery}/>
                         <Form.Control as="select" value={type} onChange={onChangeSearchQueryType}>
                             <option value="place">위치 검색</option>
                             <option value="road">경로 검색</option>
@@ -88,35 +113,13 @@ const Header = ({user, onLogout, setAddInfo, setAddRoad, setAddBuilding}) => {
                         </Form.Control>
                         <div style={{paddingLeft: 10}}/>
                         <Button variant="primary"
-                        onSubmit={onSubmit} onClick={onSubmit}>검색</Button>
+                                onSubmit={onSubmit} onClick={onSubmit}>검색</Button>
                     </Form.Group>
                 </Form>
             </Navbar>
         </StyledHeader>
     );
 };
-
-/*
-        <>
-            <HeaderBlock>
-                <Wrapper>
-                    <Link to="/map" className="logo">KONA MAP SERVICE</Link>
-                    {user ?
-                        ( <div className="right">
-                            <UserInfo>{user.username}</UserInfo>
-                                <Button to='/userInfo'>유저정보</Button>
-                            <Button onClick={onLogout}>로그아웃</Button>
-                        </div>
-                        ):
-                        ( <div className="right">
-                                <Button to="/login">로그인</Button>
-                            </div>
-                        )}
-                </Wrapper>
-            </HeaderBlock>
-            <Spacer/>
-        </>
-        */
 
 export default Header;
 

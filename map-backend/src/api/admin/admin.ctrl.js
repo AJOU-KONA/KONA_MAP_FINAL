@@ -2,6 +2,7 @@ import UserRoad from "../../models/userRoad";
 import UserPlace from "../../models/userPlace";
 import UserBuilding from "../../models/userBuilding";
 import UserBundle from "../../models/userBundle";
+import Comment from "../../models/comment";
 
 export const getUserPlaceList = async ctx => {
     try {
@@ -25,6 +26,35 @@ export const getUserRoadList = async ctx => {
         }
         ctx.body = response;
     } catch (e) {
+        ctx.throw(500, e);
+    }
+};
+
+export const getUserCommentList = async ctx => {
+    try {
+        const response = await Comment.find().exec();
+        if (!response) {
+            ctx.status = 404;
+            return;
+        }
+        ctx.body = response;
+    } catch (e) {
+        ctx.throw(500, e);
+    }
+};
+
+
+export const fixComment = async ctx => {
+    const {id} = ctx.params;
+    const {type, block} = ctx.request.body;
+    try{
+        let result = await Comment.findOneAndDelete({_id: id}).exec();
+        if(!result){
+            ctx.status = 404;
+            return;
+        }
+        ctx.body = result;
+    }catch(e){
         ctx.throw(500, e);
     }
 };
@@ -96,7 +126,6 @@ export const fixBlock = async ctx => {
         ctx.throw(500, e);
     }
 };
-
 
 export const getUserBuildingList = async ctx => {
     try {
@@ -179,3 +208,18 @@ export const getUserBundleStatistics = async ctx => {
         ctx.throw(500, e);
     }
 };
+
+export const getUserCommentStatistics = async ctx => {
+    let statistics = {totalNumber: 0};
+    try {
+        const data = await Comment.find().exec();
+        //총 갯수
+        statistics.totalNumber = data.length;
+
+        ctx.body = statistics;
+    } catch (e) {
+        ctx.throw(500, e);
+    }
+}
+
+

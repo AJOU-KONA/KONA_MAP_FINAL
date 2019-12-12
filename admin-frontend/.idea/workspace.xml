@@ -2,34 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b55483f0-f3b4-4970-8d54-adbd54dcfa86" name="Default Changelist" comment="Iteration5 add admin page &amp;&amp; set layout, sideBar, Header">
-      <change afterPath="$PROJECT_DIR$/src/components/UserBuildingManageComponent.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/UserBundleManageComponent.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/container/UserBuildingManageContainer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/container/UserBundleManageContainer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/korLocation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/UserCommentManageComponent.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/UserCommentStatisticsComponent.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/container/UserCommentManageContainer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/container/UserCommentStatisticsContainer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../map-backend/src/lib/korLocation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserManagerComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserManagerComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserPlaceManageComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserPlaceManageComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserPlaceStatisticsComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserPlaceStatisticsComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserRoadManageComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserRoadManageComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserStatisticsComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserStatisticsComponent.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/container/SidebarContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/container/SidebarContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/container/UserPlaceStatisticsContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/container/UserPlaceStatisticsContainer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/container/UserRoadManageContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/container/UserRoadManageContainer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/api/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/api/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/korLocation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/korLocation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modules/userPlace.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/userPlace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-backend/src/api/admin/admin.ctrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/admin/admin.ctrl.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-backend/src/api/admin/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/admin/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/api/map/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/map/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/api/map/map.ctrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/building.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userBuilding.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-backend/src/models/userBundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/auth/UserInfoInsertForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/auth/UserInfoInsertForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/common/Header.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/components/map/InfoWindowList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/BookMarkContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/BookMarkContainer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/containers/map/UserInfoOnMapContainer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../map-frontend/src/lib/korLocation.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/lib/korLocation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../map-frontend/src/modules/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/../map-frontend/src/modules/map.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -116,7 +107,7 @@
       <workItem from="1575767711910" duration="648000" />
       <workItem from="1575797003017" duration="3749000" />
       <workItem from="1575950354873" duration="946000" />
-      <workItem from="1576023407786" duration="20977000" />
+      <workItem from="1576023407786" duration="25439000" />
     </task>
     <task id="LOCAL-00001" summary="Iteration5 add admin page &amp;&amp; set layout, sideBar, Header">
       <created>1574928198031</created>

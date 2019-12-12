@@ -90,83 +90,120 @@ const VerticalLine = styled.div`
 `;
 
 const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) => {
-    const {searchQuery, searchQueryType, searchQueryOption} = useSelector(({map}) => ({
+    const {searchQuery, searchQueryType, searchQueryOption, searchQueryFirstLivingArea,
+        searchQuerySecondLivingArea} = useSelector(({map}) => ({
         searchQueryType: map.searchQuery.searchQueryType,
         searchQuery: map.searchQuery.searchQuery,
-        searchQueryOption: map.searchQuery.searchQueryOption
+        searchQueryOption: map.searchQuery.searchQueryOption,
+        searchQueryFirstLivingArea: map.searchQuery.searchQueryFirstLivingArea,
+        searchQuerySecondLivingArea: map.searchQuery.searchQuerySecondLivingArea
     }));
     const [filteredData, setFilteredData] = useState([]);
     const [filteredBundleData, setFilteredBundleData] = useState([]);
+
+    const addressCheck = useCallback((inf) => {
+        if(searchQueryFirstLivingArea === "전체") return true;
+        else if( searchQuerySecondLivingArea === "전체") {
+            //서울특별시 전체
+            if(inf.address.stringAddress.indexOf(searchQueryFirstLivingArea) !== -1 ) return true;
+            else return false;
+        }
+        else {
+            //서울 특별시 종로구
+            if(inf.address.stringAddress.indexOf(searchQueryFirstLivingArea) !== -1 &&
+                inf.address.stringAddress.indexOf(searchQuerySecondLivingArea) !== -1 ) return true;
+            else return false;
+        }
+    }, [searchQueryFirstLivingArea, searchQuerySecondLivingArea, searchQueryType, searchQueryOption, searchQuery]);
 
     useEffect(() => {
         if (searchQueryType === 'place') {
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                        && addressCheck(inf) ? inf : null));
                     break;
                 case "tag":
-                    setFilteredData(placeInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.tags.indexOf(searchQuery) !== -1 && inf.block < 5
+                        && addressCheck(inf) ? inf : null)));
                     break;
                 case "description":
-                    setFilteredData(placeInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf)? inf : null));
                     break;
                 case "position":
-                    setFilteredData(placeInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf)? inf : null));
                     break;
                 default:
-                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf)? inf : null));
             }
         } else if (searchQueryType === 'road') { // 경로 검색
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
                     break;
                 case "tag":
-                    setFilteredData(roadInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.tags.indexOf(searchQuery) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null)));
                     break;
                 case "description":
-                    setFilteredData(roadInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
                     break;
                 case "position":
-                    setFilteredData(roadInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
                     break;
                 default:
-                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf)? inf : null));
             }
         } else if (searchQueryType === 'building') { // 건물 검색
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5 ?  inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf)?  inf : null));
                     break;
                 case "tag":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.tags.indexOf(searchQuery) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null)));
                     break;
                 case "description":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].description.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
                     break;
                 case "position":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
                     break;
                 default:
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null));
             }
         } else {
             // bundle 검색시
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null ));
                     break;
                 case "tag":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.tags.indexOf(searchQuery) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null )));
                     break;
                 case "description":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null ));
                     break;
                 default:
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5
+                    && addressCheck(inf) ? inf : null ));
             }
         }
-    }, [searchQuery, searchQueryType, searchQueryOption, bundleInfo, placeInfo, roadInfo, buildingInfo]);
+    }, [searchQuery, searchQueryType, searchQueryOption, bundleInfo, placeInfo, roadInfo, buildingInfo, searchQueryFirstLivingArea, searchQuerySecondLivingArea]);
 
     useEffect(() => {
         console.dir(filteredData);

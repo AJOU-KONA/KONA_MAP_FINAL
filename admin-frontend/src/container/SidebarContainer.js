@@ -7,7 +7,8 @@ import {
     faMapMarker,
     faRoad,
     faList,
-    faUser, faAddressCard, faEdit, faComment, faBuilding, faStreetView, faPoll, faCheck
+    faUser, faAddressCard, faEdit, faComment, faBuilding, faStreetView, faPoll, faCheck,
+    faFolderPlus
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -22,6 +23,8 @@ import UserPlaceManageContainer from "./UserPlaceManageContainer";
 import UserRoadManageContainer from "./UserRoadManageContainer";
 import UserBuildingManageContainer from './UserBuildingManageContainer';
 import UserBundleManageContainer from "./UserBundleManageContainer";
+import UserCommentStatisticsContainer from "./UserCommentStatisticsContainer";
+import UserCommentManageContainer from "./UserCommentManageContainer";
 
 
 const StyledSideBar = styled.div`
@@ -82,6 +85,8 @@ const SideBarContainter = ({history}) => {
                                 case "/placeInfo/manageBuilding":
                                 case "/placeInfo/manageBundle":
                                 case "/placeInfo/statistics":
+                                case "/comment/statistics":
+                                case "/comment/manageComment":
                                 case "/geo" :
                                     history.push(to);
                                     route = true;
@@ -168,7 +173,7 @@ const SideBarContainter = ({history}) => {
                                 </NavItem>
                                 <NavItem eventKey="placeInfo/manageBundle">
                                     <NavIcon>
-                                        <FontAwesomeIcon icon={faBuilding} size="2x"/>
+                                        <FontAwesomeIcon icon={faFolderPlus} size="2x"/>
                                     </NavIcon>
                                     <NavText>
                                         모음 게시글 관리
@@ -211,6 +216,8 @@ const SideBarContainter = ({history}) => {
                         <Route path={"/placeInfo/manageRoad"} exact component={UserRoadManageContainer}/>
                         <Route path={"/placeInfo/manageBuilding"} exact component={UserBuildingManageContainer}/>
                         <Route path={"/placeInfo/manageBundle"} exact component={UserBundleManageContainer}/>
+                        <Route path={"/comment/statistics"} exact component={UserCommentStatisticsContainer}/>
+                        <Route path={"/comment/manageComment"} exact component={UserCommentManageContainer}/>
                     </main>
                 </React.Fragment>
             )}/>

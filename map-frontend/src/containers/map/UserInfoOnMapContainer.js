@@ -12,11 +12,11 @@ const UserInfoOnMapContainer = ({zoom}) => {
     const [buildingInfo, setBuildingInfo] = useState(null);
 
     const dispatch = useDispatch();
-    const {commentList, searchQuery, searchQueryType, searchQueryOption} = useSelector(({map, loading}) => ({
+    const {commentList, searchQuery, searchQueryType, searchQueryOption} = useSelector(({map}) => ({
         commentList: map.commentList,
         searchQueryType: map.searchQuery.searchQueryType,
         searchQuery: map.searchQuery.searchQuery,
-        searchQueryOption: map.searchQuery.searchQueryOption
+        searchQueryOption: map.searchQuery.searchQueryOption,
     }));
 
     useEffect(() => {

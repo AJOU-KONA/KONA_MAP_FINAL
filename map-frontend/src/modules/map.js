@@ -35,8 +35,8 @@ export const fetchPlaceInfo = createAction(FETCH_PLACE_INFO, data=> data);
 export const fetchRoadInfo = createAction(FETCH_ROAD_INFO, data=>data);
 export const fetchBuildingInfo = createAction(FETCH_BUILDING_INFO, data=>data);
 export const setSearchQuery = createAction(SET_SEARCH_QUERY,
-    ({searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption}) => ({
-    searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption
+    ({searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption, searchQueryFirstLivingArea, searchQuerySecondLivingArea}) => ({
+    searchQuery, searchQueryType, searchQueryOnMap, searchQueryOption, searchQueryFirstLivingArea, searchQuerySecondLivingArea
 }));
 export const setCenter = createAction(SET_CENTER, center => center);
 export const setZoom = createAction(SET_ZOOM, zoom => zoom);
@@ -77,6 +77,8 @@ const initialState = {
         searchQuery: '',
         searchQueryOnMap: false,
         searchQueryOption: '',
+        searchQueryFirstLivingArea: "서울특별시",
+        searchQuerySecondLivingArea: "종로구",
     },
     isClearMap: false,
     currentUserLocaction: {
