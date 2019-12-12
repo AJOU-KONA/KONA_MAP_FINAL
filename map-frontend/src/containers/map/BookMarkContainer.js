@@ -67,7 +67,7 @@ const BookMarkRoad = ({roadList}) => {
 
 const BookMarkBuilding = ({buildingList}) => {
     return (
-        buildingList.map(building => (<p key={building._id}>{building.name}</p>))
+        buildingList.map(building => (<p key={building._id}>{building.floorArray[0].name}</p>))
     );
 };
 

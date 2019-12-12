@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import UserRoadManageComponent from "../components/UserRoadManageComponent";
-import {fetchUserPlaceList, fetchUserRoadList} from "../modules/userPlace";
+import {fetchUserRoadList} from "../modules/userPlace";
 
 const StyledWrapper = styled.div`
     padding-left : 60px;

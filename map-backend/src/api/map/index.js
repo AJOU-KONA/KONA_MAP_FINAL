@@ -52,6 +52,8 @@ map.post('/userBundle', checkLoggedIn, mapCtrl.makeUserBundle);
 
 map.patch('/removeInfo', checkLoggedIn, mapCtrl.removeInfo);
 
+
+
 map.patch('/userRoad/comment/:id', checkLoggedIn, mapCtrl.updateUserRoadComment);
 
 map.patch('/userPlace/comment/:id', checkLoggedIn, mapCtrl.updateUserPlaceComment);

@@ -19,7 +19,9 @@ const UserBundleSchema = new Schema({
     address : { stringAddress : String, splitedAddress : [String] },
     recommend: {good: Number, bad: Number, username: [String]},
     estimate : { good: Number, interest: Number, accuracy: Number, total : Number, username : [String] },
+    block : Number,
 });
+
 
 const UserBundle = mongoose.model('userBundle', UserBundleSchema);
 

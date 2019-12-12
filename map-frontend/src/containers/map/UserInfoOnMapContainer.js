@@ -4,7 +4,6 @@ import {setCommentList} from '../../modules/map';
 import {useDispatch, useSelector} from "react-redux";
 import InfoWindowList from "../../components/map/InfoWindowList";
 
-
 const UserInfoOnMapContainer = ({zoom}) => {
     const [loading, setLoading] = useState(false);
     const [placeInfo, setPlaceInfo] = useState(null);

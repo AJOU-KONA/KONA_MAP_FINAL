@@ -20,6 +20,9 @@ import UserManageContainer from "./UserManageContainer";
 import UserPlaceStatisticsContainer from "./UserPlaceStatisticsContainer";
 import UserPlaceManageContainer from "./UserPlaceManageContainer";
 import UserRoadManageContainer from "./UserRoadManageContainer";
+import UserBuildingManageContainer from './UserBuildingManageContainer';
+import UserBundleManageContainer from "./UserBundleManageContainer";
+
 
 const StyledSideBar = styled.div`
     height: 100%;
@@ -76,6 +79,8 @@ const SideBarContainter = ({history}) => {
                                 case "/userInfo/comment":
                                 case "/placeInfo/managePlace":
                                 case "/placeInfo/manageRoad":
+                                case "/placeInfo/manageBuilding":
+                                case "/placeInfo/manageBundle":
                                 case "/placeInfo/statistics":
                                 case "/geo" :
                                     history.push(to);
@@ -161,6 +166,14 @@ const SideBarContainter = ({history}) => {
                                         건물 게시글 관리
                                     </NavText>
                                 </NavItem>
+                                <NavItem eventKey="placeInfo/manageBundle">
+                                    <NavIcon>
+                                        <FontAwesomeIcon icon={faBuilding} size="2x"/>
+                                    </NavIcon>
+                                    <NavText>
+                                        모음 게시글 관리
+                                    </NavText>
+                                </NavItem>
                             </NavItem>
 
                             <NavItem eventKey="comment">
@@ -196,7 +209,8 @@ const SideBarContainter = ({history}) => {
                         <Route path={"/placeInfo/statistics"} exact component={UserPlaceStatisticsContainer}/>
                         <Route path={"/placeInfo/managePlace"} exact component={UserPlaceManageContainer}/>
                         <Route path={"/placeInfo/manageRoad"} exact component={UserRoadManageContainer}/>
-
+                        <Route path={"/placeInfo/manageBuilding"} exact component={UserBuildingManageContainer}/>
+                        <Route path={"/placeInfo/manageBundle"} exact component={UserBundleManageContainer}/>
                     </main>
                 </React.Fragment>
             )}/>

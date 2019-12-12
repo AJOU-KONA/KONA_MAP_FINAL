@@ -95,78 +95,75 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
         searchQuery: map.searchQuery.searchQuery,
         searchQueryOption: map.searchQuery.searchQueryOption
     }));
-    const [filteredData, setFilteredData] = useState(null);
-    const [filteredBundleRoad, setFilteredBundleRoad] = useState(null);
-    const [filteredBundlePlace, setFilteredBundlePlace] = useState(null);
-    const [filteredBundleBuilding, setFilteredBundleBuilding] = useState(null);
-    const [filteredBundleData, setFilteredBundleData] = useState(null);
+    const [filteredData, setFilteredData] = useState([]);
+    const [filteredBundleData, setFilteredBundleData] = useState([]);
 
     useEffect(() => {
         if (searchQueryType === 'place') {
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "tag":
-                    setFilteredData(placeInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "description":
-                    setFilteredData(placeInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5? inf : null));
                     break;
                 case "position":
-                    setFilteredData(placeInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 default:
-                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(placeInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
             }
         } else if (searchQueryType === 'road') { // 경로 검색
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "tag":
-                    setFilteredData(roadInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "description":
-                    setFilteredData(roadInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "position":
-                    setFilteredData(roadInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 default:
-                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(roadInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
             }
         } else if (searchQueryType === 'building') { // 건물 검색
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5 ?  inf : null));
                     break;
                 case "tag":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].tags.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "description":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].description.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 case "position":
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].detailedPosition.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].detailedPosition.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
                     break;
                 default:
-                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 ? inf : null));
+                    setFilteredData(buildingInfo.filter(inf => (inf.floorArray[0].name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null));
             }
         } else {
             // bundle 검색시
             switch (searchQueryOption) {
                 case "name":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
                     break;
                 case "tag":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.tags.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
                     break;
                 case "description":
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.description.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
                     break;
                 default:
-                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 ? inf : null ));
+                    setFilteredBundleData(bundleInfo.filter(inf => (inf.name.indexOf(searchQuery)) !== -1 && inf.block < 5 ? inf : null ));
             }
         }
     }, [searchQuery, searchQueryType, searchQueryOption, bundleInfo, placeInfo, roadInfo, buildingInfo]);
@@ -184,10 +181,10 @@ const InfoWindowList = ({bundleInfo, placeInfo, roadInfo, buildingInfo, zoom}) =
 
     return (
         <>
-            {searchQueryType === 'place' && zoom <= 15 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'road' && zoom <= 15 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'building' && zoom <= 15 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
-            {searchQueryType === 'bundle' && zoom <= 15 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
+            {searchQueryType === 'place' && zoom <= 16 && <ClusterMarkerContainer type="place" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'road' && zoom <= 16 &&  <ClusterMarkerContainer type="road" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'building' && zoom <= 16 &&  <ClusterMarkerContainer type="building" zoom={zoom} info={filteredData}/>}
+            {searchQueryType === 'bundle' && zoom <= 16 &&  <ClusterMarkerContainer type="bundle" zoom={zoom} info={filteredBundleData}/>}
 
             {searchQueryType === 'place' && zoom > 16 &&  filteredData.map((inf) => (
                 <InfoWindowItem zoom={zoom} key={inf._id} info={inf}/>))}}

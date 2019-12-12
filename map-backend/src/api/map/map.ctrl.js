@@ -3,7 +3,7 @@ import Comment from "../../models/comment";
 import UserRoad from "../../models/userRoad";
 import sanitizeHtml from "sanitize-html";
 import UserBundle from "../../models/userBundle";
-import UserBuilding from "../../models/building";
+import UserBuilding from "../../models/userBuilding";
 import comment from "../comment";
 
 exports.makeUserPlace = async ctx => {
@@ -336,7 +336,7 @@ export const makeUserBundle = async ctx => {
         username, name, description, tags, position, detailedPosition, publishingDate,
         primaryPositionType, secondaryPositionType, roadList, placeList, buildingList, youtubeVideoId,
         address, recommend: {good: 0, bad: 0, username: []},
-        estimate : {good: 0, interest: 0, accuracy : 0, username: []}
+        estimate : {good: 0, interest: 0, accuracy : 0, username: []}, block : 0
     });
     try {
         await userBundle.save();

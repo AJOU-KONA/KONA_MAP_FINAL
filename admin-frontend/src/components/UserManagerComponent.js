@@ -4,31 +4,30 @@ import {useDispatch} from "react-redux";
 import {setBlock, setWatch} from "../modules/auth";
 
 const getUserStatus = (userInfo) => {
-  if(!userInfo.status.block && !userInfo.status.watch) return '정상';
-  else if ( userInfo.status.block ) return '차단';
-  else return '감시';
+    if (!userInfo.status.block && !userInfo.status.watch) return '정상';
+    else if (userInfo.status.block) return '차단';
+    else return '감시';
 };
 const UserListItem = ({userInfo}) => {
     const [localInfo, setLocalInfo] = useState(userInfo);
     const dispatch = useDispatch();
 
     const onWatchClick = useCallback(() => {
-        if(getUserStatus(localInfo) === '감시') {
-            setLocalInfo({...localInfo, status : { watch : false, block : localInfo.status.block}});
+        if (getUserStatus(localInfo) === '감시') {
+            setLocalInfo({...localInfo, status: {watch: false, block: localInfo.status.block}});
             dispatch(setWatch({username: userInfo.username, status: false}));
-        }
-        else {
-            setLocalInfo({...localInfo, status : { watch : true, block : localInfo.status.block}});
+        } else {
+            setLocalInfo({...localInfo, status: {watch: true, block: localInfo.status.block}});
             dispatch(setWatch({username: userInfo.username, status: true}));
         }
     }, [localInfo.status]);
 
     const onBlockClick = useCallback(() => {
-        if(getUserStatus(localInfo) === '차단'){
-            setLocalInfo({...localInfo, status : {block : false, watch : localInfo.status.watch}});
+        if (getUserStatus(localInfo) === '차단') {
+            setLocalInfo({...localInfo, status: {block: false, watch: localInfo.status.watch}});
             dispatch(setBlock({username: userInfo.username, status: false}));
-        } else{
-            setLocalInfo({...localInfo, status : {block : true, watch : localInfo.status.watch}});
+        } else {
+            setLocalInfo({...localInfo, status: {block: true, watch: localInfo.status.watch}});
             dispatch(setBlock({username: userInfo.username, status: true}));
         }
     }, [localInfo.status]);
@@ -37,7 +36,7 @@ const UserListItem = ({userInfo}) => {
         console.dir(localInfo);
     }, [localInfo]);
 
-    if(localInfo.username === 'admin') return null;
+    if (localInfo.username === 'admin') return null;
 
     return (
         <tr align="middle">
@@ -46,7 +45,7 @@ const UserListItem = ({userInfo}) => {
             <td>{localInfo.age}</td>
             <td>{localInfo.gender}</td>
             <td>{localInfo.warningCount}</td>
-            {getUserStatus(localInfo) === '정상' && <td >{getUserStatus(localInfo)}</td>}
+            {getUserStatus(localInfo) === '정상' && <td>{getUserStatus(localInfo)}</td>}
             {getUserStatus(localInfo) === '감시' && <td className="bg-warning">{getUserStatus(localInfo)}</td>}
             {getUserStatus(localInfo) === '차단' && <td className="bg-danger">{getUserStatus(localInfo)}</td>}
             <Row align="center" style={{paddingLeft: 20, paddingTop: 15, justifyContent: "center"}}>
