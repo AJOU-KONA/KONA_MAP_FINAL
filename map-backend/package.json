@@ -5,7 +5,7 @@
   "dependencies": {
     "async-busboy": "^0.7.0",
     "aws-sdk": "^2.580.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "dotenv": "^8.1.0",
     "esm": "^3.2.25",
     "formidable": "^1.2.1",
